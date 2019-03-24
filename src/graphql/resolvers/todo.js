@@ -1,29 +1,34 @@
 import _ from 'lodash'
 
-import { getTodoList, upsertNewTodoItem } from '../models/todo'
+import { getTodoList, upsertNewTodoItem, deleteTodoItem } from '../models/todo'
 import { STATUS_CONFIGS } from '../../configs/todo'
 
 // Define typename
 export const TODO_LIST_TYPE_NAME = 'TodoList'
 export const TODO_ITEM_TYPE_NAME = 'TodoItem'
 
+const makeSortedItemList = (itemList, sortBy = 'id', isAscending = true) => ({
+  items: sortTodoListBy(itemList, sortBy, isAscending).map(item => ({
+    ...item,
+    __typename: TODO_ITEM_TYPE_NAME,
+  })),
+  __typename: TODO_LIST_TYPE_NAME,
+})
+
 // Define resolvers
 export const resolvers = {
   Query: {
     todoList: () => {
-      const items = getTodoList()
-      const sortedItemList = sortTodoListBy(items, 'id', false)
-
-      return {
-        items: sortedItemList.map(item => ({
-          ...item,
-          __typename: TODO_ITEM_TYPE_NAME,
-        })),
-        __typename: TODO_LIST_TYPE_NAME,
-      }
+      const itemList = getTodoList()
+      return makeSortedItemList(itemList, 'id', false)
     },
   },
   Mutation: {
+    deleteTodo: (_src, { id }) => {
+      // delete item from store
+      const newItemList = deleteTodoItem(id)
+      return makeSortedItemList(newItemList, 'id', false)
+    },
     upsertTodo: (_src, args) => {
       const { id } = args
       // manage upsert task data
@@ -40,14 +45,7 @@ export const resolvers = {
       }
       // add new task to storage
       const newItemList = upsertNewTodoItem(upsertTask)
-      const sortedItemList = sortTodoListBy(newItemList, 'id', false)
-      return {
-        items: sortedItemList.map(item => ({
-          ...item,
-          __typename: TODO_ITEM_TYPE_NAME,
-        })),
-        __typename: TODO_LIST_TYPE_NAME,
-      }
+      return makeSortedItemList(newItemList, 'id', false)
     },
   },
 }

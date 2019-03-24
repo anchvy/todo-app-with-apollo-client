@@ -2,6 +2,23 @@ import { LOCALSTORAGE_KEY } from '../../configs/todo'
 import { getItem, setItem } from '../../libs/localStorage'
 
 /**
+ * delete todo item from store with given id
+ * @param {string} id
+ * @returns {Object}
+ */
+export function deleteTodoItem(id) {
+  const items = getTodoList()
+  const acknowledge = delete items[id]
+
+  if (acknowledge) {
+    const response = setItem(LOCALSTORAGE_KEY, items)
+    return response ? items : null
+  }
+
+  return null
+}
+
+/**
  * get todo items from store
  * @returns {*}
  */

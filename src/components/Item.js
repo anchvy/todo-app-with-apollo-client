@@ -21,6 +21,7 @@ import { PRIORITY_CONFIGS } from '../configs/todo'
 import { SPACING } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
+import { composedDeleteTodoItemMutation, DELETE_TODO_ITEM_MUTATION_NAME } from '../componentsGraphQL/TodoList'
 import { composedSetEditorStateMutation, EDITOR_STATE_MUTATION_NAME } from '../componentsGraphQL/Editor'
 import { EDITOR_EDIT_MODE } from '../graphql/resolvers/editor'
 
@@ -181,7 +182,7 @@ const composedItem = props => {
   }
   // handle on click delete button on list item event
   const onClickDeleteButton = item => {
-    props[EDITOR_STATE_MUTATION_NAME]({ variables: { isOpen: true, mode: EDITOR_EDIT_MODE } })
+    props[DELETE_TODO_ITEM_MUTATION_NAME]({ variables: { id: item.id } })
   }
 
   return (
@@ -194,7 +195,10 @@ const composedItem = props => {
   )
 }
 
-export const ItemWithApollo = compose(composedSetEditorStateMutation)(composedItem)
+export const ItemWithApollo = compose(
+  composedSetEditorStateMutation,
+  composedDeleteTodoItemMutation
+)(composedItem)
 
 Item.propTypes = {
   onClickDeleteButton: PropTypes.func,
