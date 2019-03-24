@@ -48,6 +48,7 @@ const TitleLabel = styled.div`
   align-items: center;
   word-break: break-word;
   margin-left: ${SPACING.SM}px;
+  color: #424242;
 `
 const Divider = styled(DefaultDivider)`
   && {
