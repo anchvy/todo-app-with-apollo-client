@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import dateformat from 'dateformat'
@@ -26,7 +26,7 @@ import {
   EDITOR_STATE_MUTATION_NAME,
 } from '../componentsGraphQL/Editor'
 
-import { ADD_TODO_ITEM_MUTATION_NAME, composedAddTodoItemMutation } from '../componentsGraphQL/TodoList'
+import { UPSERT_TODO_ITEM_MUTATION_NAME, composedUpsertTodoItemMutation } from '../componentsGraphQL/TodoList'
 import { EDITOR_CREATE_MODE, EDITOR_EDIT_MODE } from '../graphql/resolvers/editor'
 
 /*----------------------------------------------------------------------------------
@@ -56,29 +56,39 @@ const Radio = styled(DefaultRadio)`
  *---------------------------------------------------------------------------------*/
 
 const useOnChangeInput = initialValue => {
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(`${initialValue}`)
   // handle on change event
   const onChangeValue = event => {
     setValue(event.target.value)
   }
+  // on update state
+  useEffect(() => {
+    setValue(initialValue)
+  }, [initialValue])
+
   return { value, onChangeValue }
 }
 
 const EditorDialog = props => {
+  const today = new Date()
   const PRIORITY_CONFIGS_VALUES = Object.values(PRIORITY_CONFIGS)
   // define internal variable
-  const { mode } = props
+  const { mode, editingTask } = props
   const isEditing = mode !== EDITOR_CREATE_MODE
-  // title section
-  const { value: title, onChangeValue: onChangeTitle } = useOnChangeInput('')
+  // initial value
+  // add: set duedate tomorrow as default
+  // add: set middle priority value as default
+  const activeTitle = isEditing ? editingTask.title : ''
+  const activeDueDate = isEditing ? new Date(editingTask.dueDate).getTime() : today.setDate(today.getDate() + 1)
+  const activePriority = isEditing
+    ? editingTask.priority
+    : // middle priority value as default
+      PRIORITY_CONFIGS_VALUES[Math.floor(PRIORITY_CONFIGS_VALUES.length / 2)].value
+  // handle state
   const [isTitleError, setIsTitleError] = useState(false)
-  // due date section
-  const todatDate = new Date()
-  const tomorrowDate = todatDate.setDate(todatDate.getDate() + 1)
-  const { value: dueDate, onChangeValue: onChangeDueDate } = useOnChangeInput(dateformat(tomorrowDate, 'yyyy-mm-d'))
-  // priority section
-  const middlePrority = PRIORITY_CONFIGS_VALUES[Math.floor(PRIORITY_CONFIGS_VALUES.length / 2)]
-  const { value: priority, onChangeValue: onChangePriority } = useOnChangeInput(middlePrority.value)
+  const { value: priority, onChangeValue: onChangePriority } = useOnChangeInput(activePriority)
+  const { value: title, onChangeValue: onChangeTitle } = useOnChangeInput(activeTitle)
+  const { value: dueDate, onChangeValue: onChangeDueDate } = useOnChangeInput(dateformat(activeDueDate, 'yyyy-mm-dd'))
   // error handling
   const onClickAddButton = () => {
     // validate title value
@@ -88,7 +98,7 @@ const EditorDialog = props => {
       return false
     }
     // validate passed
-    props.onClickAddButton({ title: cleanTitle, dueDate, priority })
+    props.onClickAddButton({ id: editingTask.id, title: cleanTitle, dueDate, priority })
   }
 
   return (
@@ -174,15 +184,13 @@ const EditorDialog = props => {
 const ComposedEditorDialog = props => {
   // query: editor state
   const editor = _.get(props, `${EDITOR_STATE_QUERY_NAME}.editor`, {})
-  console.log('>>> [EditorDialog.js] props : ', props)
-  console.log('>>> [EditorDialog.js] editor : ', editor)
   // mutation: update editor  state
   const onCancelState = () => {
     props[EDITOR_STATE_MUTATION_NAME]({ variables: { isOpen: false } })
   }
   // mutation: add todo task
   const onAddNewTask = async newTask => {
-    const response = await props[ADD_TODO_ITEM_MUTATION_NAME]({ variables: newTask })
+    const response = await props[UPSERT_TODO_ITEM_MUTATION_NAME]({ variables: newTask })
     const error = _.get(response, `data.error`)
     // handle response
     if (!error) {
@@ -192,12 +200,11 @@ const ComposedEditorDialog = props => {
     }
   }
 
-  console.log('>>> [EditorDialog.js] editor.mode : ', editor.mode)
-
   return (
     <EditorDialog
       isOpen={editor.isOpen}
       mode={editor.mode}
+      editingTask={editor.editingTask}
       onClickCloseButton={onCancelState}
       onClickAddButton={onAddNewTask}
     />
@@ -207,10 +214,11 @@ const ComposedEditorDialog = props => {
 export const EditorDialogWithApollo = compose(
   composedSetEditorStateMutation,
   composedGetEditorStateQuery,
-  composedAddTodoItemMutation
+  composedUpsertTodoItemMutation
 )(ComposedEditorDialog)
 
 EditorDialog.propTypes = {
+  editingTask: PropTypes.object,
   mode: PropTypes.string,
   isOpen: PropTypes.bool,
   onClickCloseButton: PropTypes.func,
@@ -218,6 +226,7 @@ EditorDialog.propTypes = {
 }
 
 EditorDialog.defaultProps = {
+  editingTask: {},
   mode: PropTypes.oneOf([EDITOR_CREATE_MODE, EDITOR_EDIT_MODE]),
   isOpen: false,
   onClickCloseButton: EMPTY_FUNCTION,

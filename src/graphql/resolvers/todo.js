@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import { getTodoList, addNewTodoItem } from '../models/todo'
+
+import { getTodoList, upsertNewTodoItem } from '../models/todo'
 import { STATUS_CONFIGS } from '../../configs/todo'
 
 // Define typename
@@ -23,19 +24,22 @@ export const resolvers = {
     },
   },
   Mutation: {
-    addTodo: (_src, args) => {
-      // manage new task data
-      const timestamp = new Date().getTime()
-      const newTask = {
+    upsertTodo: (_src, args) => {
+      const { id } = args
+      // manage upsert task data
+      const upsertTask = {
         ...args,
         dueDate: new Date(args.dueDate).getTime(),
-        createdAt: timestamp,
-        id: String(timestamp), // unique id
         status: STATUS_CONFIGS.inProgress.query,
-        __typename: TODO_ITEM_TYPE_NAME,
+      }
+      // add meta data for new task
+      if (!id) {
+        const timestamp = new Date().getTime()
+        upsertTask.id = String(timestamp)
+        upsertTask.createdAt = timestamp
       }
       // add new task to storage
-      const newItemList = addNewTodoItem(newTask)
+      const newItemList = upsertNewTodoItem(upsertTask)
       const sortedItemList = sortTodoListBy(newItemList, 'id', false)
       return {
         items: sortedItemList.map(item => ({

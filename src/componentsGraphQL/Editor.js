@@ -10,6 +10,12 @@ const GET_SIDEBAR_STATE = gql`
     editor @client {
       isOpen
       mode
+      editingTask @client {
+        id
+        title
+        priority
+        dueDate
+      }
     }
   }
 `
@@ -20,6 +26,12 @@ const SET_SIDEBAR_STATE = gql`
       isOpen
       mode
       editingTaskId
+      editingTask @client {
+        id
+        title
+        priority
+        dueDate
+      }
     }
   }
 `

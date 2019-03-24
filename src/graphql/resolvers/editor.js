@@ -1,5 +1,5 @@
-// import { TODO_ITEM_TYPE_NAME } from './todo'
-// import { GET_TODO_ITEM } from '../../componentsGraphQL/TodoList'
+import { TODO_ITEM_TYPE_NAME } from './todo'
+import { getTodoItem } from '../models/todo'
 
 // Define typename
 export const EDITOR_TYPE_NAME = 'EditorDialog'
@@ -13,34 +13,33 @@ export const defaults = {
     isOpen: false,
     mode: EDITOR_CREATE_MODE,
     editingTaskId: null,
+    editingTask: {
+      id: null,
+      title: null,
+      priority: null,
+      dueDate: null,
+      __typename: TODO_ITEM_TYPE_NAME,
+    },
     __typename: EDITOR_TYPE_NAME,
   },
 }
 
 // Define resolvers
 export const resolvers = {
-  Query: {
-    editingTask: src => {
-      console.error('>>> [editor.js:23] sssssssssss editingTask src', src)
-      return {}
-    },
-  },
   Mutation: {
-    setEditorState: (_src, { isOpen, mode = EDITOR_CREATE_MODE, editingTaskId = null }, { cache }) => {
-      // let editingTask
+    setEditorState: (_src, { isOpen, mode = EDITOR_CREATE_MODE, editingTaskId = null }) => {
+      let editingTask
       // if args.editingTaskId, then get data from cache
-      if (editingTaskId) {
-        // const data = cache.readFragment({ query: GET_TODO_ITEM, variables: { id: editingTaskId } })
-        // console.log('>>> [editor.js] data : ', data)
+      if (mode === EDITOR_EDIT_MODE && editingTaskId) {
+        editingTask = getTodoItem(editingTaskId)
+        editingTask.__typename = TODO_ITEM_TYPE_NAME
       }
-
-      console.log('>>> [editor.js] editingTaskId : ', editingTaskId)
-      console.log('>>> [editor.js] cache : ', cache)
 
       return {
         isOpen,
         mode,
         editingTaskId,
+        editingTask,
         __typename: EDITOR_TYPE_NAME,
       }
     },

@@ -3,8 +3,7 @@ import { graphql } from 'react-apollo'
 import { formatComposedComponentProps } from '../utils/graphql'
 
 export const GET_TODO_LIST_QUERY_NAME = 'todoListQuery'
-export const GET_TODO_ITEM_QUERY_NAME = 'todoItemQuery'
-export const ADD_TODO_ITEM_MUTATION_NAME = 'addTodoMutation'
+export const UPSERT_TODO_ITEM_MUTATION_NAME = 'upsertTodoMutation'
 
 const GET_TODO_LIST = gql`
   query GetTodoList {
@@ -20,21 +19,9 @@ const GET_TODO_LIST = gql`
   }
 `
 
-export const GET_TODO_ITEM = gql`
-  query GetTodoItem($id: String!) {
-    todoItem(id: $id) @client {
-      id
-      title
-      priority
-      dueDate
-      createdAt
-    }
-  }
-`
-
 const ADD_TODO_ITEM = gql`
-  mutation AddToDoItem($title: String!, $dueDate: Date!, $priority: String!) {
-    addTodo(title: $title, dueDate: $dueDate, priority: $priority) @client {
+  mutation upsertTodoItem($title: String!, $dueDate: Date!, $priority: String!, $id: String) {
+    upsertTodo(title: $title, dueDate: $dueDate, priority: $priority, id: $id) @client {
       items {
         id
         title
@@ -51,11 +38,6 @@ export const composedGetTodoListQuery = graphql(GET_TODO_LIST, {
   props: props => formatComposedComponentProps(props, GET_TODO_LIST_QUERY_NAME),
 })
 
-export const composedGetTodoItemQuery = graphql(GET_TODO_ITEM, {
-  name: GET_TODO_ITEM_QUERY_NAME,
-  props: props => formatComposedComponentProps(props, GET_TODO_ITEM_QUERY_NAME),
-})
-
-export const composedAddTodoItemMutation = graphql(ADD_TODO_ITEM, {
-  name: ADD_TODO_ITEM_MUTATION_NAME,
+export const composedUpsertTodoItemMutation = graphql(ADD_TODO_ITEM, {
+  name: UPSERT_TODO_ITEM_MUTATION_NAME,
 })

@@ -124,9 +124,8 @@ const Item = props => {
   const onChangeCheckbox = event => {
     event.stopPropagation()
   }
-  // computed data
-  const createdAt = new Date(props.item.createdAt)
   // new task: created time less than 1 min from now
+  const createdAt = new Date(props.item.createdAt).getTime()
   const isNewTask = new Date() - createdAt < 60 * 1000
 
   return (
@@ -146,7 +145,7 @@ const Item = props => {
         <ExpansionPanelDetails>
           <DetailBox>
             <IconDateRange />
-            <DetailBoxTitle>{dateformat(createdAt, 'd mmm yy')}</DetailBoxTitle>
+            <DetailBoxTitle>{dateformat(props.item.dueDate, 'd mmm yy')}</DetailBoxTitle>
           </DetailBox>
           <Divider />
           {/* action box */}
@@ -205,6 +204,7 @@ Item.propTypes = {
     title: PropTypes.string,
     priority: PropTypes.string,
     createdAt: PropTypes.number,
+    dueDate: PropTypes.number,
   }),
 }
 
