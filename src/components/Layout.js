@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { MAX_WIDTH as SIDEBAR_MAX_WIDTH } from './SideBar'
 import { NavigationBarWithApollo } from './NavigationBar'
 import { CHILDREN_PROP_TYPES } from '../utils/proptypes'
 import { withDesktopSize } from '../utils/styles'
@@ -17,10 +18,9 @@ const Wrapper = styled.div`
 const Container = styled.div`
   display: flex;
 
-  // ${withDesktopSize(`
-  //   margin: auto;
-  //   max-width: 768px;
-  // `)}
+  ${withDesktopSize(`
+    padding-left: ${SIDEBAR_MAX_WIDTH}px;
+  `)}
 `
 
 /*----------------------------------------------------------------------------------

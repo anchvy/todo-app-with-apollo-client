@@ -7,7 +7,7 @@ import { compose } from 'react-apollo'
 
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import Dialog from '@material-ui/core/Dialog'
+import DefaultDialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
@@ -49,6 +49,9 @@ const Radio = styled(DefaultRadio)`
   && {
     padding: ${SPACING.XS}px;
   }
+`
+const Dialog = styled(DefaultDialog)`
+  min-height: 70wh;
 `
 
 /*----------------------------------------------------------------------------------
@@ -107,9 +110,10 @@ const EditorDialog = props => {
         open={props.isOpen}
         onClose={props.onClickCloseButton}
         aria-labelledby="Task Editor"
-        maxWidth="md"
+        maxWidth="xl"
         fullWidth
         fullScreen={!isDesktopSize()}
+        PaperProps={{ style: { height: '100%' } }}
       >
         {/* header */}
         <DialogTitle>{!isEditing ? `+ Add Task` : `Edit Task`}</DialogTitle>

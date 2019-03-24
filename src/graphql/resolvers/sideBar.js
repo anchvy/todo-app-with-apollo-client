@@ -16,7 +16,7 @@ export const resolvers = {
   Mutation: {
     setSideBarState: (_src, { isOpen }) => {
       return {
-        isOpen,
+        isOpen: isDesktopSize() || isOpen,
         __typename: SIDEBAR_TYPE_NAME,
       }
     },

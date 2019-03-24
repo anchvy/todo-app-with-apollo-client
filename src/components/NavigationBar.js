@@ -12,6 +12,8 @@ import { COLORS } from '../utils/colors'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
 import { SIDEBAR_STATE_MUTATION_NAME, composedSetSideBarStateMutation } from '../componentsGraphQL/SideBar'
+import { MAX_WIDTH as SIDEBAR_MAX_WIDTH } from './SideBar'
+import { withDesktopSize, styleHidden } from '../utils/styles'
 
 /*----------------------------------------------------------------------------------
  *  STYLED COMPONENTS
@@ -27,32 +29,37 @@ const Title = styled.div`
   display: flex;
   align-items: center;
 `
-
 const Container = styled.div`
   display: flex;
   width: 100%;
   max-width: 1024px;
   margin: auto;
   font-size: 18px;
+
+  ${withDesktopSize(`
+  padding-left: ${SIDEBAR_MAX_WIDTH}px;
+`)}
 `
+const MenuButton = styled(IconButton)`
+  ${withDesktopSize(styleHidden(false))}
+`
+
 /*----------------------------------------------------------------------------------
  *  MAIN COMPOENTNS
  *---------------------------------------------------------------------------------*/
 
 const NavigationBar = props => {
   return (
-    <React.Fragment>
-      <AppBar>
-        <Toolbar>
-          <Container>
-            <IconButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
-              <MenuIcon />
-            </IconButton>
-            <Title>TODO LIST</Title>
-          </Container>
-        </Toolbar>
-      </AppBar>
-    </React.Fragment>
+    <AppBar>
+      <Toolbar>
+        <Container>
+          <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
+            <MenuIcon />
+          </MenuButton>
+          <Title>ALL TASKS</Title>
+        </Container>
+      </Toolbar>
+    </AppBar>
   )
 }
 

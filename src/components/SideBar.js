@@ -11,13 +11,12 @@ import Divider from '@material-ui/core/Divider'
 import MenuList from '@material-ui/core/MenuList'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
-import ClickAwayListener from '@material-ui/core/ClickAwayListener'
 
 import IconAdd from '@material-ui/icons/Add'
 import IconClose from '@material-ui/icons/Close'
 
 import { STATUS_CONFIGS } from '../configs/todo'
-import { SPACING, withDesktopSize, styleHidden } from '../utils/styles'
+import { SPACING, withDesktopSize, styleHidden, isDesktopSize } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
 import {
@@ -33,20 +32,18 @@ import { EDITOR_CREATE_MODE } from '../graphql/resolvers/editor'
  *  STYLED COMPONENTS
  *---------------------------------------------------------------------------------*/
 
-const MAX_WIDTH = 320
+export const MAX_WIDTH = 320
 
 const Paper = styled(({ isOpen, ...restProps }) => <DefaultPaper {...restProps} />)`
   && {
-    position: absolute;
-    z-index: 9999;
+    position: fixed;
+    z-index: 1300;
     height: 100vh;
     width: 100vw;
     max-width: ${MAX_WIDTH}px;
     border-radius: 0;
-
-      transition: all 0.5s ease;
-      left: -${MAX_WIDTH}px;
-    
+    transition: all 0.5s ease;
+    left: -${MAX_WIDTH}px;
 
     ${props =>
       props.isOpen &&
@@ -56,7 +53,9 @@ const Paper = styled(({ isOpen, ...restProps }) => <DefaultPaper {...restProps} 
       `}
 
     // works only in desktop
-    // ${withDesktopSize()}
+    ${withDesktopSize(`
+      left: 0px;
+    `)}
   }
 `
 const TitleBox = styled.div``
@@ -87,8 +86,10 @@ const CloseButton = styled(IconButton)`
  *  MAIN COMPONENT
  *---------------------------------------------------------------------------------*/
 
-const SideBar = props => (
-  <ClickAwayListener onClickAway={props.isOpen ? props.onClickCloseButton : EMPTY_FUNCTION}>
+const SideBar = props => {
+  // handle click away
+
+  return (
     <Paper isOpen={props.isOpen}>
       <CloseButton onClick={props.onClickCloseButton}>
         <IconClose />
@@ -117,8 +118,8 @@ const SideBar = props => (
       </MenuList>
       <PoweredByTitle>Powered By Woravan Suthatar</PoweredByTitle>
     </Paper>
-  </ClickAwayListener>
-)
+  )
+}
 
 /*----------------------------------------------------------------------------------
  *  COMPONENT WITH APOLLO
