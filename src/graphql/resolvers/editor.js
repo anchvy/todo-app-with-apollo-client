@@ -18,6 +18,8 @@ export const defaults = {
       title: null,
       priority: null,
       dueDate: null,
+      status: null,
+      createdAt: null,
       __typename: TODO_ITEM_TYPE_NAME,
     },
     __typename: EDITOR_TYPE_NAME,

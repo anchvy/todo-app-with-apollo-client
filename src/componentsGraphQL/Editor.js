@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
 import { formatComposedComponentProps } from '../utils/graphql'
+import { TODO_ITEM_FRAGMENT } from './TodoList'
 
 export const EDITOR_STATE_QUERY_NAME = 'editorQuery'
 export const EDITOR_STATE_MUTATION_NAME = 'editorMutation'
@@ -11,10 +12,7 @@ const GET_SIDEBAR_STATE = gql`
       isOpen
       mode
       editingTask @client {
-        id
-        title
-        priority
-        dueDate
+        ${TODO_ITEM_FRAGMENT}
       }
     }
   }
@@ -27,10 +25,7 @@ const SET_SIDEBAR_STATE = gql`
       mode
       editingTaskId
       editingTask @client {
-        id
-        title
-        priority
-        dueDate
+        ${TODO_ITEM_FRAGMENT}
       }
     }
   }

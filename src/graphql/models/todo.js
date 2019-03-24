@@ -2,6 +2,26 @@ import { LOCALSTORAGE_KEY } from '../../configs/todo'
 import { getItem, setItem } from '../../libs/localStorage'
 
 /**
+ * update todo item status with given options
+ * @param {string} id
+ * @param {string} status
+ * @returns {Object}
+ */
+export function updateTodoItemStatus(id, status) {
+  const items = getTodoList()
+  const newItems = {
+    ...items,
+    [id]: {
+      ...items[id],
+      status,
+    },
+  }
+  // set new data to store
+  const response = setItem(LOCALSTORAGE_KEY, newItems)
+  return response ? newItems : null
+}
+
+/**
  * delete todo item from store with given id
  * @param {string} id
  * @returns {Object}
@@ -46,12 +66,12 @@ export function getTodoItem(id) {
  * @returns {Object|null}
  */
 export function upsertNewTodoItem(task) {
-  const exisingItems = getTodoList()
+  const items = getTodoList()
   // merge data
   const newItems = {
-    ...exisingItems,
+    ...items,
     [task.id]: {
-      ...exisingItems[task.id],
+      ...items[task.id],
       ...task,
     },
   }

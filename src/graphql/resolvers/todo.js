@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { getTodoList, upsertNewTodoItem, deleteTodoItem } from '../models/todo'
+import { getTodoList, upsertNewTodoItem, deleteTodoItem, updateTodoItemStatus } from '../models/todo'
 import { STATUS_CONFIGS } from '../../configs/todo'
 
 // Define typename
@@ -24,6 +24,11 @@ export const resolvers = {
     },
   },
   Mutation: {
+    doneTodo: (_src, { id }) => {
+      // change task status to 'done'
+      const newItemList = updateTodoItemStatus(id, STATUS_CONFIGS.DONE.query)
+      return makeSortedItemList(newItemList, 'id', false)
+    },
     deleteTodo: (_src, { id }) => {
       // delete item from store
       const newItemList = deleteTodoItem(id)
@@ -35,13 +40,13 @@ export const resolvers = {
       const upsertTask = {
         ...args,
         dueDate: new Date(args.dueDate).getTime(),
-        status: STATUS_CONFIGS.inProgress.query,
       }
       // add meta data for new task
       if (!id) {
         const timestamp = new Date().getTime()
         upsertTask.id = String(timestamp)
         upsertTask.createdAt = timestamp
+        upsertTask.status = STATUS_CONFIGS.IN_PROGRESS.query
       }
       // add new task to storage
       const newItemList = upsertNewTodoItem(upsertTask)

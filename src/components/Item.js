@@ -12,16 +12,22 @@ import IconButton from '@material-ui/core/IconButton'
 import DefaultCheckbox from '@material-ui/core/Checkbox'
 import DefaultDivider from '@material-ui/core/Divider'
 
-import IconDone from '@material-ui/icons/DoneOutline'
-import IconCreate from '@material-ui/icons/CreateOutlined'
-import IconDelete from '@material-ui/icons/DeleteOutline'
+import IconDone from '@material-ui/icons/Done'
+import IconDoneOutline from '@material-ui/icons/DoneOutline'
+import IconCreateOutlined from '@material-ui/icons/CreateOutlined'
+import IconDeleteOutline from '@material-ui/icons/DeleteOutline'
 import IconDateRange from '@material-ui/icons/DateRange'
 
-import { PRIORITY_CONFIGS } from '../configs/todo'
+import { PRIORITY_CONFIGS, STATUS_CONFIGS } from '../configs/todo'
 import { SPACING } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
-import { composedDeleteTodoItemMutation, DELETE_TODO_ITEM_MUTATION_NAME } from '../componentsGraphQL/TodoList'
+import {
+  composedDeleteTodoItemMutation,
+  DELETE_TODO_ITEM_MUTATION_NAME,
+  composedDoneTodoItemMutation,
+  DONE_TODO_ITEM_MUTATION_NAME,
+} from '../componentsGraphQL/TodoList'
 import { composedSetEditorStateMutation, EDITOR_STATE_MUTATION_NAME } from '../componentsGraphQL/Editor'
 import { EDITOR_EDIT_MODE } from '../graphql/resolvers/editor'
 
@@ -73,11 +79,10 @@ const ExpansionPanelDetails = styled(DefaultExpansionPanelDetails)`
     padding: 0 ${SPACING.LG}px ${SPACING.SM}px ${SPACING.MD}px;
   }
 `
-const NewTaskLabel = styled.div`
+const StatusLabel = styled.div`
   font-size: 12px;
-  color: #2196f3;
+  color: ${props => props.color};
   text-align: right;
-  margin: ${SPACING.XS}px;
 `
 const DetailBox = styled.div`
   display: flex;
@@ -91,6 +96,7 @@ const ActionBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #616161;
 `
 const DetailBoxTitle = styled.span`
   margin-left: ${SPACING.SM}px;
@@ -106,59 +112,64 @@ const Checkbox = styled(DefaultCheckbox)`
  *---------------------------------------------------------------------------------*/
 
 const Item = props => {
+  const { item } = props
+  const isDoneTask = item.status === STATUS_CONFIGS.DONE.query
+  console.log('>>> [Item.js] item : ', item)
   // handle done button event
   const onClickDoneButton = event => {
     event.stopPropagation()
-    props.onClickDoneButton(props.item)
+    props.onClickDoneButton(item)
   }
   // handle edit button event
   const onClickEditButton = event => {
     event.stopPropagation()
-    props.onClickEditButton(props.item)
+    props.onClickEditButton(item)
   }
   // handle delete button event
   const onClickDeleteButton = event => {
     event.stopPropagation()
-    props.onClickDeleteButton(props.item)
+    props.onClickDeleteButton(item)
   }
   // handle checkbox event
   const onChangeCheckbox = event => {
     event.stopPropagation()
   }
   // new task: created time less than 1 min from now
-  const createdAt = new Date(props.item.createdAt).getTime()
+  const createdAt = new Date(item.createdAt).getTime()
   const isNewTask = new Date() - createdAt < 60 * 1000
+  // status label
+  const activeStatus = isDoneTask ? STATUS_CONFIGS.DONE : isNewTask ? STATUS_CONFIGS.NEW : null
 
   return (
     <Grid item xs={12}>
-      <ExpansionPanel borderColor={PRIORITY_CONFIGS[props.item.priority].color}>
+      <ExpansionPanel borderColor={PRIORITY_CONFIGS[item.priority].color}>
         {/* overwrite  mui style when expanded */}
         <ExpansionPanelSummary style={{ minHeight: 0 }}>
-          {isNewTask && <NewTaskLabel>New</NewTaskLabel>}
+          {activeStatus && <StatusLabel color={activeStatus.color}>{activeStatus.label}</StatusLabel>}
           {/* overwrite  mui last child selecting style */}
           <ItemContainer style={{ paddingRight: 0 }}>
             <ContentBox>
               <Checkbox color="default" onClick={onChangeCheckbox} />
-              <TitleLabel>{props.item.title}</TitleLabel>
+              <TitleLabel>{item.title}</TitleLabel>
             </ContentBox>
           </ItemContainer>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <DetailBox>
             <IconDateRange />
-            <DetailBoxTitle>{dateformat(props.item.dueDate, 'd mmm yy')}</DetailBoxTitle>
+            <DetailBoxTitle>{dateformat(item.dueDate, 'd mmm yy')}</DetailBoxTitle>
           </DetailBox>
           <Divider />
           {/* action box */}
           <ActionBox>
-            <IconButton color="inherit" onClick={onClickDoneButton}>
-              <IconDone />
+            <IconButton color="inherit" onClick={onClickDoneButton} disabled={isDoneTask}>
+              {isDoneTask ? <IconDone /> : <IconDoneOutline />}
             </IconButton>
             <IconButton color="inherit" onClick={onClickEditButton}>
-              <IconCreate />
+              <IconCreateOutlined />
             </IconButton>
             <IconButton color="inherit" onClick={onClickDeleteButton}>
-              <IconDelete />
+              <IconDeleteOutline />
             </IconButton>
           </ActionBox>
         </ExpansionPanelDetails>
@@ -178,7 +189,7 @@ const composedItem = props => {
   }
   // handle on click done button on list item event
   const onClickDoneButton = item => {
-    props[EDITOR_STATE_MUTATION_NAME]({ variables: { isOpen: true, mode: EDITOR_EDIT_MODE } })
+    props[DONE_TODO_ITEM_MUTATION_NAME]({ variables: { id: item.id } })
   }
   // handle on click delete button on list item event
   const onClickDeleteButton = item => {
@@ -197,7 +208,8 @@ const composedItem = props => {
 
 export const ItemWithApollo = compose(
   composedSetEditorStateMutation,
-  composedDeleteTodoItemMutation
+  composedDeleteTodoItemMutation,
+  composedDoneTodoItemMutation
 )(composedItem)
 
 Item.propTypes = {
@@ -207,6 +219,7 @@ Item.propTypes = {
   item: PropTypes.shape({
     title: PropTypes.string,
     priority: PropTypes.string,
+    status: PropTypes.string,
     createdAt: PropTypes.number,
     dueDate: PropTypes.number,
   }),
