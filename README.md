@@ -1,2 +1,0 @@
-# mom.com
-Hello
