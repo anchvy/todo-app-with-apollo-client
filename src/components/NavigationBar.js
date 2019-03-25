@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
@@ -11,9 +12,15 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { COLORS } from '../utils/colors'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
-import { SIDEBAR_STATE_MUTATION_NAME, composedSetSideBarStateMutation } from '../componentsGraphQL/SideBar'
+import {
+  SIDEBAR_STATE_MUTATION_NAME,
+  SIDEBAR_STATE_QUERY_NAME,
+  composedSetSideBarStateMutation,
+  composedGetSideBarStateQuery,
+} from '../componentsGraphQL/SideBar'
 import { MAX_WIDTH as SIDEBAR_MAX_WIDTH } from './SideBar'
 import { withDesktopSize, styleHidden } from '../utils/styles'
+import { MENU_STATUS_CONFIGS, APP_NAME } from '../configs/todo'
 
 /*----------------------------------------------------------------------------------
  *  STYLED COMPONENTS
@@ -48,41 +55,47 @@ const MenuButton = styled(IconButton)`
  *  MAIN COMPOENTNS
  *---------------------------------------------------------------------------------*/
 
-const NavigationBar = props => {
-  return (
-    <AppBar>
-      <Toolbar>
-        <Container>
-          <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
-            <MenuIcon />
-          </MenuButton>
-          <Title>ALL TASKS</Title>
-        </Container>
-      </Toolbar>
-    </AppBar>
-  )
-}
+const NavigationBar = props => (
+  <AppBar>
+    <Toolbar>
+      <Container>
+        <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
+          <MenuIcon />
+        </MenuButton>
+        <Title>{props.title}</Title>
+      </Container>
+    </Toolbar>
+  </AppBar>
+)
 
 /*----------------------------------------------------------------------------------
  *  COMPONENTS WITH APOLLO
  *---------------------------------------------------------------------------------*/
 
 const ComposedNavigationBar = props => {
+  // query: sidebar state
+  const sideBar = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar`, {})
+  const activeMenu = _.find(MENU_STATUS_CONFIGS, status => status.query === sideBar.selected)
   // handle on click menu button event
   const onClickMenuButton = () => {
     props[SIDEBAR_STATE_MUTATION_NAME]({ variables: { isOpen: true } })
   }
 
-  return <NavigationBar onClickMenuButton={onClickMenuButton} />
+  return <NavigationBar title={activeMenu && activeMenu.label} onClickMenuButton={onClickMenuButton} />
 }
 
-export const NavigationBarWithApollo = compose(composedSetSideBarStateMutation)(ComposedNavigationBar)
+export const NavigationBarWithApollo = compose(
+  composedSetSideBarStateMutation,
+  composedGetSideBarStateQuery
+)(ComposedNavigationBar)
 
 NavigationBar.propTypes = {
+  title: PropTypes.string,
   onClickMenuButton: PropTypes.func,
 }
 
 NavigationBar.defaultProps = {
+  title: APP_NAME,
   onClickMenuButton: EMPTY_FUNCTION,
 }
 

@@ -186,10 +186,8 @@ const EditorDialog = props => {
  *---------------------------------------------------------------------------------*/
 
 const ComposedEditorDialog = props => {
-  console.log('>>> [EditorDialog.js] props : ', props)
   // query: editor state
   const editor = _.get(props, `${EDITOR_STATE_QUERY_NAME}.editor`, {})
-  console.log('>>> [EditorDialog.js] editor : ', editor)
   // mutation: update editor  state
   const onCancelState = () => {
     props[EDITOR_STATE_MUTATION_NAME]({ variables: { isOpen: false } })

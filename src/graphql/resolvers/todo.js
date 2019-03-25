@@ -23,7 +23,7 @@ const makeSortedItemList = (itemList, sortBy = 'id', isAscending = true) =>
 // Define resolvers
 export const resolvers = {
   Query: {
-    todoList: () => {
+    todoList: (_src, { status = STATUS_CONFIGS.ALL.query }) => {
       const itemList = getTodoList()
       return makeSortedItemList(itemList)
     },

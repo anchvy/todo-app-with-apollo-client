@@ -9,13 +9,13 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Divider from '@material-ui/core/Divider'
 import MenuList from '@material-ui/core/MenuList'
-import MenuItem from '@material-ui/core/MenuItem'
+import DefaultMenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
 
 import IconAdd from '@material-ui/icons/Add'
 import IconClose from '@material-ui/icons/Close'
 
-import { STATUS_CONFIGS } from '../configs/todo'
+import { MENU_STATUS_CONFIGS, STATUS_CONFIGS, APP_NAME } from '../configs/todo'
 import { SPACING, withDesktopSize, styleHidden } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
@@ -81,13 +81,26 @@ const CloseButton = styled(IconButton)`
     ${withDesktopSize(styleHidden(true))}
   }
 `
+const MenuItem = styled(({ isSelected, ...restProps }) => <DefaultMenuItem {...restProps} />)`
+  ${props =>
+    props.isSelected &&
+    css`
+      && {
+        font-style: italic;
+        background: #eeeeee;
+      }
+    `}
+`
 
 /*----------------------------------------------------------------------------------
  *  MAIN COMPONENT
  *---------------------------------------------------------------------------------*/
 
 const SideBar = props => {
-  // handle click away
+  // handle on click status item event
+  const onClickMenuItem = event => {
+    props.onClickMenuItem(event, event.currentTarget.getAttribute('query'))
+  }
 
   return (
     <Paper isOpen={props.isOpen}>
@@ -95,7 +108,7 @@ const SideBar = props => {
         <IconClose />
       </CloseButton>
       <TitleBox>
-        <Title>TODO APP</Title>
+        <Title>{APP_NAME}</Title>
       </TitleBox>
       {/* static menu */}
       <MenuList>
@@ -108,8 +121,13 @@ const SideBar = props => {
         </MenuItem>
         <Divider disabled />
         {/* another menu */}
-        {Object.values(STATUS_CONFIGS).map(menu => (
-          <MenuItem key={menu.query} onClick={props.onClickMenuItem}>
+        {MENU_STATUS_CONFIGS.map(menu => (
+          <MenuItem
+            key={menu.query}
+            onClick={onClickMenuItem}
+            isSelected={props.selectedMenu === menu.query}
+            query={menu.query}
+          >
             <ListItemIcon>{menu.icon}</ListItemIcon>
             <ListItemText primary={menu.label} />
           </MenuItem>
@@ -127,10 +145,14 @@ const SideBar = props => {
 
 const ComposedSideBar = props => {
   // query: sidebar state
-  const isSideBarOpen = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar.isOpen`)
+  const sideBar = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar`, {})
+  // handle on click menu button event
+  const onClickMenuItem = (event, selected) => {
+    onClickCloseMenuButton(event, selected)
+  }
   // handle on click close button event
-  const onClickCloseMenuButton = () => {
-    props[SIDEBAR_STATE_MUTATION_NAME]({ variables: { isOpen: false } })
+  const onClickCloseMenuButton = (_event, closeWithSelected) => {
+    props[SIDEBAR_STATE_MUTATION_NAME]({ variables: { isOpen: false, selected: closeWithSelected } })
   }
   // handle on click new task button event
   const onClickAddTaskButton = () => {
@@ -139,7 +161,13 @@ const ComposedSideBar = props => {
   }
 
   return (
-    <SideBar isOpen={isSideBarOpen} onClickCloseButton={onClickCloseMenuButton} onClickNewTask={onClickAddTaskButton} />
+    <SideBar
+      isOpen={sideBar.isOpen}
+      selectedMenu={sideBar.selected}
+      onClickCloseButton={onClickCloseMenuButton}
+      onClickNewTask={onClickAddTaskButton}
+      onClickMenuItem={onClickMenuItem}
+    />
   )
 }
 
@@ -151,6 +179,7 @@ export const SideBarWithApollo = compose(
 
 SideBar.propTypes = {
   isOpen: PropTypes.bool,
+  selectedMenu: PropTypes.string,
   onClickCloseButton: PropTypes.func,
   onClickMenuItem: PropTypes.func,
   onClickNewTask: PropTypes.func,
@@ -158,6 +187,7 @@ SideBar.propTypes = {
 
 SideBar.defaultProps = {
   isOpen: false,
+  selectedMenu: STATUS_CONFIGS.ALL.query,
   onClickCloseButton: EMPTY_FUNCTION,
   onClickMenuItem: EMPTY_FUNCTION,
   onClickNewTask: EMPTY_FUNCTION,

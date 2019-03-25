@@ -9,6 +9,7 @@ const typeDefs = `
 
   type SideBar {
     isOpen: Bool
+    selected: String
   }
 
   type EditorDialog {
@@ -20,13 +21,13 @@ const typeDefs = `
 
   type Mutation {
     addTodo(title: String!, dueDate: Date!, priority: String!): TodoList
-    setSideBarState(isOpen: Bool!): SideBar
+    setSideBarState(isOpen: Bool!, selected: String): SideBar
     setEditorState(isOpen: Bool!, mode: String!, editingTaskId: String): EditorDialog
   }
 
   type Query {
     todoItem(id: String!): TodoItem
-    todoList: TodoList
+    todoList(status: String): TodoList
     sideBar: SideBar
     editor: EditorDialog
   }
