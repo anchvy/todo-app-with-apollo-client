@@ -16,7 +16,7 @@ import IconAdd from '@material-ui/icons/Add'
 import IconClose from '@material-ui/icons/Close'
 
 import { STATUS_CONFIGS } from '../configs/todo'
-import { SPACING, withDesktopSize, styleHidden, isDesktopSize } from '../utils/styles'
+import { SPACING, withDesktopSize, styleHidden } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
 import {

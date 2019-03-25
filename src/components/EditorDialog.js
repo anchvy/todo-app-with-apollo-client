@@ -16,7 +16,7 @@ import Grid from '@material-ui/core/Grid'
 import DefaultRadio from '@material-ui/core/Radio'
 
 import { PRIORITY_CONFIGS } from '../configs/todo'
-import { isDesktopSize, SPACING } from '../utils/styles'
+import { isDesktopSize, SPACING, withDesktopSize } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
 import {
@@ -134,7 +134,7 @@ const EditorDialog = props => {
                   error={isTitleError}
                 />
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={5}>
                 <TextField
                   label="Due Date"
                   type="date"
@@ -145,10 +145,10 @@ const EditorDialog = props => {
                   }}
                 />
               </Grid>
-              <RadioContainer item xs={12} sm={8}>
+              <RadioContainer item xs={12}>
                 <Grid container spacing={SPACING.MD}>
                   {PRIORITY_CONFIGS_VALUES.map(priorityItem => (
-                    <RadioBox key={priorityItem.value} item xs={12} sm={12 / PRIORITY_CONFIGS_VALUES.length}>
+                    <RadioBox key={priorityItem.value} item xs={12} sm={6 / PRIORITY_CONFIGS_VALUES.length}>
                       <Radio
                         checked={priority === priorityItem.value}
                         onChange={onChangePriority}
