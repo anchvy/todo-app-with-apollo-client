@@ -4,6 +4,18 @@ import PropTypes from 'prop-types'
 import { EMPTY_FUNCTION } from './constant'
 
 /**
+ * factory: compose object with typename
+ * @param {string} typename
+ * @returns {Function}
+ */
+export function composeTypenameFactory(typename) {
+  return src => ({
+    ...src,
+    __typename: typename,
+  })
+}
+
+/**
  * compute custom response from default graphql response
  * @param {*} response
  * @returns {Object}
@@ -28,11 +40,6 @@ export function defaultResponseParser(response) {
 export function formatComposedComponentProps(gqlResponse, name) {
   const apolloResponse = gqlResponse[name]
   const { ownProps } = gqlResponse
-
-  // mutation
-  // if (_.isFunction(apolloResponse)) {
-
-  // }
 
   return {
     [name]: {

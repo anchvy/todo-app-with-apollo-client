@@ -2,37 +2,42 @@ import _ from 'lodash'
 
 import { getTodoList, upsertNewTodoItem, deleteTodoItem, updateTodoItemStatus } from '../models/todo'
 import { STATUS_CONFIGS } from '../../configs/todo'
+import { composeTypenameFactory } from '../../utils/graphql'
 
 // Define typename
 export const TODO_LIST_TYPE_NAME = 'TodoList'
 export const TODO_ITEM_TYPE_NAME = 'TodoItem'
 
-const makeSortedItemList = (itemList, sortBy = 'id', isAscending = true) => ({
-  items: sortTodoListBy(itemList, sortBy, isAscending).map(item => ({
-    ...item,
-    __typename: TODO_ITEM_TYPE_NAME,
-  })),
-  __typename: TODO_LIST_TYPE_NAME,
-})
+export const composeTodoListTypename = composeTypenameFactory(TODO_LIST_TYPE_NAME)
+export const composeTodoItemTypename = composeTypenameFactory(TODO_ITEM_TYPE_NAME)
+
+const makeSortedItemList = (itemList, sortBy = 'id', isAscending = true) =>
+  composeTodoListTypename({
+    items: sortTodoListBy(itemList, sortBy, isAscending).map(item =>
+      composeTodoItemTypename({
+        ...item,
+      })
+    ),
+  })
 
 // Define resolvers
 export const resolvers = {
   Query: {
     todoList: () => {
       const itemList = getTodoList()
-      return makeSortedItemList(itemList, 'id', false)
+      return makeSortedItemList(itemList)
     },
   },
   Mutation: {
     doneTodo: (_src, { id }) => {
       // change task status to 'done'
       const newItemList = updateTodoItemStatus(id, STATUS_CONFIGS.DONE.query)
-      return makeSortedItemList(newItemList, 'id', false)
+      return makeSortedItemList(newItemList)
     },
     deleteTodo: (_src, { id }) => {
       // delete item from store
       const newItemList = deleteTodoItem(id)
-      return makeSortedItemList(newItemList, 'id', false)
+      return makeSortedItemList(newItemList)
     },
     upsertTodo: (_src, args) => {
       const { id } = args
@@ -50,7 +55,7 @@ export const resolvers = {
       }
       // add new task to storage
       const newItemList = upsertNewTodoItem(upsertTask)
-      return makeSortedItemList(newItemList, 'id', false)
+      return makeSortedItemList(newItemList)
     },
   },
 }
@@ -62,15 +67,15 @@ export const resolvers = {
 /**
  * sort todo list with given options
  * @param {Array|Object} key
- * @param {string} key
- * @param {boolean} [isAscending = true]
+ * @param {string} [key = 'id']
+ * @param {boolean} [isDescending = true]
  * @return {Array}
  */
-function sortTodoListBy(items, key, isAscending = true) {
+function sortTodoListBy(items, key = 'id', isDescending = true) {
   const sortItems = _.isArray(items) ? items : _.isObject(items) ? Object.values(items) : []
-  if (isAscending) {
-    return sortItems.sort((a, b) => a[key] - b[key])
-  } else {
+  if (isDescending) {
     return sortItems.sort((a, b) => b[key] - a[key])
+  } else {
+    return sortItems.sort((a, b) => a[key] - b[key])
   }
 }

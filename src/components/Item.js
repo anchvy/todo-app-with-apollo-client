@@ -115,7 +115,6 @@ const Checkbox = styled(DefaultCheckbox)`
 const Item = props => {
   const { item } = props
   const isDoneTask = item.status === STATUS_CONFIGS.DONE.query
-  console.log('>>> [Item.js] item : ', item)
   // handle done button event
   const onClickDoneButton = event => {
     event.stopPropagation()

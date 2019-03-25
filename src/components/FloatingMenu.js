@@ -11,7 +11,7 @@ import { SIDEBAR_STATE_QUERY_NAME, composedGetSideBarStateQuery } from '../compo
 import { EDITOR_STATE_MUTATION_NAME, composedSetEditorStateMutation } from '../componentsGraphQL/Editor'
 import { EDITOR_CREATE_MODE } from '../graphql/resolvers/editor'
 
-const AddTaskButton = styled(Fab)`
+const AddTaskButton = styled(({ isSideBarOpen, ...restProps }) => <Fab {...restProps} />)`
   && {
     position: fixed;
     bottom: ${SPACING.MD}px;

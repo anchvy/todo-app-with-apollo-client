@@ -16,8 +16,8 @@ import Grid from '@material-ui/core/Grid'
 import DefaultRadio from '@material-ui/core/Radio'
 
 import { PRIORITY_CONFIGS } from '../configs/todo'
-import { isDesktopSize, SPACING, withDesktopSize } from '../utils/styles'
-import { EMPTY_FUNCTION } from '../utils/constant'
+import { isDesktopSize, SPACING } from '../utils/styles'
+import { EMPTY_FUNCTION, EMPTY_OBJECT } from '../utils/constant'
 
 import {
   composedSetEditorStateMutation,
@@ -186,8 +186,10 @@ const EditorDialog = props => {
  *---------------------------------------------------------------------------------*/
 
 const ComposedEditorDialog = props => {
+  console.log('>>> [EditorDialog.js] props : ', props)
   // query: editor state
   const editor = _.get(props, `${EDITOR_STATE_QUERY_NAME}.editor`, {})
+  console.log('>>> [EditorDialog.js] editor : ', editor)
   // mutation: update editor  state
   const onCancelState = () => {
     props[EDITOR_STATE_MUTATION_NAME]({ variables: { isOpen: false } })
@@ -208,7 +210,7 @@ const ComposedEditorDialog = props => {
     <EditorDialog
       isOpen={editor.isOpen}
       mode={editor.mode}
-      editingTask={editor.editingTask}
+      editingTask={editor.editingTask || EMPTY_OBJECT}
       onClickCloseButton={onCancelState}
       onClickAddButton={onAddNewTask}
     />

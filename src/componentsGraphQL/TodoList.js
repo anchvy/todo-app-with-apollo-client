@@ -20,7 +20,7 @@ export const TODO_ITEM_FRAGMENT = `
 const GET_TODO_LIST = gql`
   query GetTodoList {
     todoList @client {
-      items {
+      items @client {
         ${TODO_ITEM_FRAGMENT}
       }
     }
@@ -30,7 +30,7 @@ const GET_TODO_LIST = gql`
 const ADD_TODO_ITEM = gql`
   mutation UpsertTodoItem($title: String!, $dueDate: Date!, $priority: String!, $id: String) {
     upsertTodo(title: $title, dueDate: $dueDate, priority: $priority, id: $id) @client {
-      items {
+      items @client {
         ${TODO_ITEM_FRAGMENT}
       }
     }
@@ -40,7 +40,7 @@ const ADD_TODO_ITEM = gql`
 const DELETE_TODO_ITEM = gql`
   mutation DeleteTodoItem($id: String!) {
     deleteTodo(id: $id) @client {
-      items {
+      items @client {
         ${TODO_ITEM_FRAGMENT}
       }
     }
@@ -50,7 +50,7 @@ const DELETE_TODO_ITEM = gql`
 const DONE_TODO_ITEM = gql`
   mutation DoneTodoItem($id: String!) {
     doneTodo(id: $id) @client {
-      items {
+      items @client {
         ${TODO_ITEM_FRAGMENT}
       }
     }
