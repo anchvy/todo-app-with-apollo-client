@@ -16,6 +16,8 @@ const AddTaskButton = styled(({ isSideBarOpen, ...restProps }) => <Fab {...restP
     position: fixed;
     bottom: ${SPACING.MD}px;
     right: ${SPACING.MD}px;
+    background: #90a4ae;
+    color: white;
   }
 
   ${props => props.isSideBarOpen && styleHidden(true)}

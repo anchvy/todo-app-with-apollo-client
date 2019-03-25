@@ -7,7 +7,6 @@ export function dataIdFromObject(object) {
   switch (object.__typename) {
     case SIDEBAR_TYPE_NAME:
     case EDITOR_TYPE_NAME:
-    case TODO_LIST_TYPE_NAME:
       return object.__typename
     default:
       return defaultDataIdFromObject(object)

@@ -19,7 +19,7 @@ export const TODO_ITEM_FRAGMENT = `
 
 const GET_TODO_LIST = gql`
   query GetTodoList($status: String) {
-    todoList(status: $status) @client {
+    todoList(status: $status) @client{
       items @client {
         ${TODO_ITEM_FRAGMENT}
       }
