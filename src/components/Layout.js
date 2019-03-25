@@ -10,12 +10,11 @@ import { withDesktopSize } from '../utils/styles'
  *  STYLED COMPONENTS
  *---------------------------------------------------------------------------------*/
 
-const Wrapper = styled.div`
+const Wrapper = styled.main`
   height: 100vh;
   min-width: 320px;
 `
-
-const Container = styled.div`
+const Container = styled.section`
   display: flex;
 
   ${withDesktopSize(`

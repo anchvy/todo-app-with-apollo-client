@@ -16,7 +16,7 @@ import { SPACING } from '../utils/styles'
  *  STYLED COMPONENTS
  *---------------------------------------------------------------------------------*/
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   width: 100%;
 `
 const Container = styled.div`
