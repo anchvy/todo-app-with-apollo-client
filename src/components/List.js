@@ -27,11 +27,12 @@ const ItemList = styled.div`
  *---------------------------------------------------------------------------------*/
 
 const List = props => (
-  <GetTodoListQuery status={props.filter}>
+  <GetTodoListQuery status={props.filter} fetchPolicy="cache-and-network">
     {response => {
       // extract data from todoListQuery
       // const todoListResponse = _.get(response, `${GET_TODO_LIST_QUERY_NAME}`)
       const todoItems = _.get(response, `${GET_TODO_LIST_QUERY_NAME}.todoList.items`, [])
+      console.log('>>> [List.js] todoItems : ', todoItems)
       // const { state: todoListState } = todoListResponse
       return (
         <ItemList>

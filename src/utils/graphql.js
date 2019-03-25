@@ -58,10 +58,10 @@ export function formatComposedComponentProps(gqlResponse, name) {
  */
 export function createQueryComponent(gql, name, options = {}) {
   const CustomQueryComponent = props => {
-    const { children, ...restProps } = props
+    const { children, fetchPolicy, ...restProps } = props
 
     return (
-      <Query query={gql} variables={restProps}>
+      <Query query={gql} variables={restProps} fetchPolicy={fetchPolicy}>
         {response => {
           const { data, ...restResponse } = response
           const defaultResponse = defaultResponseParser(response, options)
@@ -80,10 +80,12 @@ export function createQueryComponent(gql, name, options = {}) {
   }
 
   CustomQueryComponent.propTypes = {
+    fetchPolicy: PropTypes.string,
     children: PropTypes.func,
   }
 
   CustomQueryComponent.defaultProps = {
+    fetchPolicy: 'cache-first',
     children: EMPTY_FUNCTION,
   }
 
