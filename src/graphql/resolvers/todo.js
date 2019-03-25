@@ -11,9 +11,15 @@ export const TODO_ITEM_TYPE_NAME = 'TodoItem'
 export const composeTodoListTypename = composeTypenameFactory(TODO_LIST_TYPE_NAME)
 export const composeTodoItemTypename = composeTypenameFactory(TODO_ITEM_TYPE_NAME)
 
-const makeSortedItemList = (itemList, sortBy = 'id', isAscending = true) =>
+/**
+ * sort and filter list with given options
+ * @param {Object} itemList
+ * @param {Object} [options]
+ * @returns {Object}
+ */
+const makeSortedItemList = (itemList, options) =>
   composeTodoListTypename({
-    items: sortTodoListBy(itemList, sortBy, isAscending).map(item =>
+    items: makeTodoListBy(itemList, options).map(item =>
       composeTodoItemTypename({
         ...item,
       })
@@ -25,7 +31,7 @@ export const resolvers = {
   Query: {
     todoList: (_src, { status = STATUS_CONFIGS.ALL.query }) => {
       const itemList = getTodoList()
-      return makeSortedItemList(itemList)
+      return makeSortedItemList(itemList, { status })
     },
   },
   Mutation: {
@@ -64,18 +70,32 @@ export const resolvers = {
  *  UTILITY FUNCTION
  *---------------------------------------------------------------------------------*/
 
+const DEFAULT_TODO_LIST_OPTIONS = { status: 'all', sortBy: 'id', isDescending: true }
+
 /**
  * sort todo list with given options
  * @param {Array|Object} key
- * @param {string} [key = 'id']
- * @param {boolean} [isDescending = true]
+ * @param {string} [options.status = 'all']
+ * @param {string} [options.sortBy = 'id']
+ * @param {boolean} [options.isDescending = true]
  * @return {Array}
  */
-function sortTodoListBy(items, key = 'id', isDescending = true) {
-  const sortItems = _.isArray(items) ? items : _.isObject(items) ? Object.values(items) : []
+function makeTodoListBy(items, options = DEFAULT_TODO_LIST_OPTIONS) {
+  const validateItems = _.isArray(items) ? items : _.isObject(items) ? Object.values(items) : []
+  if (_.isEmpty(validateItems)) return []
+  // merge options to make new todo list
+  const mergedOptions = { ...DEFAULT_TODO_LIST_OPTIONS, ...options }
+  const { status, sortBy, isDescending } = mergedOptions
+  // filter section
+  let filteredItems = validateItems
+  if (status !== STATUS_CONFIGS.ALL.query) {
+    // mutate variable, if we need to filter
+    filteredItems = validateItems.filter(item => item.status === status)
+  }
+  // sort section
   if (isDescending) {
-    return sortItems.sort((a, b) => b[key] - a[key])
+    return filteredItems.sort((a, b) => b[sortBy] - a[sortBy])
   } else {
-    return sortItems.sort((a, b) => a[key] - b[key])
+    return filteredItems.sort((a, b) => a[sortBy] - b[sortBy])
   }
 }

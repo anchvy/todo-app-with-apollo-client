@@ -40,7 +40,7 @@ export function deleteTodoItem(id) {
 
 /**
  * get todo items from store
- * @returns {*}
+ * @returns {Object}
  */
 export function getTodoList() {
   return getItem(LOCALSTORAGE_KEY) || {}
@@ -52,7 +52,7 @@ export function getTodoList() {
  * @returns {Object}
  */
 export function getTodoItem(id) {
-  return getItem(LOCALSTORAGE_KEY)[id] || {}
+  return (getItem(LOCALSTORAGE_KEY) && getItem(LOCALSTORAGE_KEY)[id]) || {}
 }
 
 /**

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import { graphql } from 'react-apollo'
-import { formatComposedComponentProps } from '../utils/graphql'
+import { createQueryComponent, formatComposedComponentProps } from '../utils/graphql'
 
 export const GET_TODO_LIST_QUERY_NAME = 'todoListQuery'
 export const UPSERT_TODO_ITEM_MUTATION_NAME = 'upsertTodoMutation'
@@ -56,6 +56,8 @@ const DONE_TODO_ITEM = gql`
     }
   }
 `
+
+export const GetTodoListQuery = createQueryComponent(GET_TODO_LIST, GET_TODO_LIST_QUERY_NAME)
 
 export const composedGetTodoListQuery = graphql(GET_TODO_LIST, {
   name: GET_TODO_LIST_QUERY_NAME,
