@@ -29,3 +29,36 @@ export const resolvers = {
     },
   },
 }
+
+/**
+ * get sidebar state
+ * caller: another resolver
+ * @param {*} cache
+ * @return {Object}
+ */
+export function getSideBarCache(cache) {
+  const { sideBar } = cache.readQuery({ query: GET_SIDEBAR_STATE })
+  return sideBar
+}
+
+/**
+ * set sidebar state
+ * caller: another resolver
+ * @param {*} cache
+ * @return {null}
+ */
+export function setSideBarCache(cache, updateData) {
+  // get existing data
+  const sideBar = getSideBarCache(cache)
+  // update cache directly
+  cache.writeData({
+    data: {
+      sideBar: {
+        ...sideBar,
+        ...updateData,
+      },
+    },
+  })
+
+  return null
+}

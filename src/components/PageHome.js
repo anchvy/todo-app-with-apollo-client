@@ -17,7 +17,8 @@ const Wrapper = styled.section`
   width: 100%;
 `
 const Container = styled.div`
-  margin: 80px 0;
+  padding: 60px 0 0 0;
+  height: 100%;
 `
 const ListContainer = styled.div`
   margin: ${SPACING.MD}px;

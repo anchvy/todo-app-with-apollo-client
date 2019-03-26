@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { getTodoList, upsertNewTodoItem, deleteTodoItem, updateTodoItemStatus } from '../models/todo'
 import { STATUS_CONFIGS } from '../../configs/todo'
 import { composeTypenameFactory } from '../../utils/graphql'
+import { getSideBarCache, setSideBarCache } from './sideBar'
 
 // Define typename
 export const TODO_LIST_TYPE_NAME = 'TodoList'
@@ -35,17 +36,21 @@ export const resolvers = {
     },
   },
   Mutation: {
-    doneTodo: (_src, { id }) => {
+    doneTodo: (_src, { id }, { cache }) => {
+      const sideBar = getSideBarCache(cache)
       // change task status to 'done'
       const newItemList = updateTodoItemStatus(id, STATUS_CONFIGS.DONE.query)
-      return makeSortedItemList(newItemList)
+      return makeSortedItemList(newItemList, { status: sideBar.selected })
     },
-    deleteTodo: (_src, { id }) => {
+    deleteTodo: (_src, { id }, { cache }) => {
+      const sideBar = getSideBarCache(cache)
       // delete item from store
       const newItemList = deleteTodoItem(id)
-      return makeSortedItemList(newItemList)
+      return makeSortedItemList(newItemList, { status: sideBar.selected })
     },
-    upsertTodo: (_src, args) => {
+    upsertTodo: (_src, args, { cache }) => {
+      // if id exist, then update
+      // if is not exist, then insert
       const { id } = args
       // manage upsert task data
       const upsertTask = {
@@ -61,7 +66,15 @@ export const resolvers = {
       }
       // add new task to storage
       const newItemList = upsertNewTodoItem(upsertTask)
-      return makeSortedItemList(newItemList)
+      if (!id) {
+        // if insert, reset filter
+        setSideBarCache(cache, { selected: STATUS_CONFIGS.ALL.query })
+        return makeSortedItemList(newItemList)
+      } else {
+        // if update, use current filter
+        const sideBar = getSideBarCache(cache)
+        return makeSortedItemList(newItemList, { status: sideBar.selected })
+      }
     },
   },
 }
@@ -70,12 +83,12 @@ export const resolvers = {
  *  UTILITY FUNCTION
  *---------------------------------------------------------------------------------*/
 
-const DEFAULT_TODO_LIST_OPTIONS = { status: 'all', sortBy: 'id', isDescending: true }
+const DEFAULT_TODO_LIST_OPTIONS = { status: STATUS_CONFIGS.ALL.query, sortBy: 'id', isDescending: true }
 
 /**
  * sort todo list with given options
  * @param {Array|Object} key
- * @param {string} [options.status = 'all']
+ * @param {string} [options.status = STATUS_CONFIGS.ALL.query]
  * @param {string} [options.sortBy = 'id']
  * @param {boolean} [options.isDescending = true]
  * @return {Array}

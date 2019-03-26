@@ -11,15 +11,16 @@ import { withDesktopSize } from '../utils/styles'
  *---------------------------------------------------------------------------------*/
 
 const Wrapper = styled.main`
-  height: 100vh;
+  min-height: 100vh;
   min-width: 320px;
 `
-const Container = styled.section`
+const Container = styled.article`
   display: flex;
+  height: 100%;
 
   ${withDesktopSize(`
     padding-left: ${SIDEBAR_MAX_WIDTH}px;
-  `)}
+  `)};
 `
 
 /*----------------------------------------------------------------------------------

@@ -7,6 +7,7 @@ import { compose } from 'react-apollo'
 import Grid from '@material-ui/core/Grid'
 
 import { ItemWithApollo } from './Item'
+import EmptyState from './EmptyState'
 import { SPACING } from '../utils/styles'
 import { GET_TODO_LIST_QUERY_NAME, GetTodoListQuery } from '../componentsGraphQL/TodoList'
 import { SIDEBAR_STATE_QUERY_NAME, composedGetSideBarStateQuery } from '../componentsGraphQL/SideBar'
@@ -29,10 +30,9 @@ const List = props => (
   <GetTodoListQuery status={props.filter} fetchPolicy="cache-and-network">
     {response => {
       // extract data from todoListQuery
-      // const todoListResponse = _.get(response, `${GET_TODO_LIST_QUERY_NAME}`)
       const todoItems = _.get(response, `${GET_TODO_LIST_QUERY_NAME}.todoList.items`, [])
-      // const { state: todoListState } = todoListResponse
-      return (
+
+      return !_.isEmpty(todoItems) ? (
         <ItemList>
           <Grid container spacing={SPACING.SM}>
             {todoItems.map(item => (
@@ -40,6 +40,8 @@ const List = props => (
             ))}
           </Grid>
         </ItemList>
+      ) : (
+        <EmptyState />
       )
     }}
   </GetTodoListQuery>

@@ -58,10 +58,15 @@ export function formatComposedComponentProps(gqlResponse, name) {
  */
 export function createQueryComponent(gql, name, options = {}) {
   const CustomQueryComponent = props => {
-    const { children, fetchPolicy, ...restProps } = props
+    const { children, fetchPolicy, notifyOnNetworkStatusChange, ...restProps } = props
 
     return (
-      <Query query={gql} variables={restProps} fetchPolicy={fetchPolicy}>
+      <Query
+        query={gql}
+        variables={restProps}
+        fetchPolicy={fetchPolicy}
+        notifyOnNetworkStatusChange={notifyOnNetworkStatusChange}
+      >
         {response => {
           const { data, ...restResponse } = response
           const defaultResponse = defaultResponseParser(response, options)
@@ -80,11 +85,13 @@ export function createQueryComponent(gql, name, options = {}) {
   }
 
   CustomQueryComponent.propTypes = {
+    notifyOnNetworkStatusChange: PropTypes.bool,
     fetchPolicy: PropTypes.string,
     children: PropTypes.func,
   }
 
   CustomQueryComponent.defaultProps = {
+    notifyOnNetworkStatusChange: false,
     fetchPolicy: 'cache-first',
     children: EMPTY_FUNCTION,
   }
