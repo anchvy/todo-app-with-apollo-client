@@ -19,7 +19,6 @@ const client = new ApolloClient({
   cache,
   clientState: {
     resolvers,
-    defaults,
     typeDefs,
   },
 })

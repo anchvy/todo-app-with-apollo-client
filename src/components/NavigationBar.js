@@ -39,7 +39,6 @@ const Title = styled.div`
 const Container = styled.div`
   display: flex;
   width: 100%;
-  max-width: 1024px;
   margin: auto;
   font-size: 18px;
 

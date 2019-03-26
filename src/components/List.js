@@ -18,7 +18,6 @@ import { STATUS_CONFIGS } from '../configs/todo'
 
 const ItemList = styled.div`
   margin: auto;
-  max-width: 1024px;
   width: 100%;
 `
 
@@ -32,7 +31,6 @@ const List = props => (
       // extract data from todoListQuery
       // const todoListResponse = _.get(response, `${GET_TODO_LIST_QUERY_NAME}`)
       const todoItems = _.get(response, `${GET_TODO_LIST_QUERY_NAME}.todoList.items`, [])
-      console.log('>>> [List.js] todoItems : ', todoItems)
       // const { state: todoListState } = todoListResponse
       return (
         <ItemList>
@@ -50,7 +48,6 @@ const List = props => (
 const ComposedListStatus = props => {
   // query: sidebar state
   const sideBar = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar`, {})
-  console.log('>>> [List.js] sideBar : ', sideBar)
   return <List filter={sideBar.selected} />
 }
 
