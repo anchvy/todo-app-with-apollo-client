@@ -69,12 +69,14 @@ const useOnChangeInput = initialValue => {
     setValue(initialValue)
   }, [initialValue])
 
-  return { value, onChangeValue }
+  return { value, setValue, onChangeValue }
 }
+
+const PRIORITY_CONFIGS_VALUES = Object.values(PRIORITY_CONFIGS)
+const DEFAULT_PRIORITY = PRIORITY_CONFIGS_VALUES[Math.floor(PRIORITY_CONFIGS_VALUES.length / 2)].value
 
 const EditorDialog = props => {
   const today = new Date()
-  const PRIORITY_CONFIGS_VALUES = Object.values(PRIORITY_CONFIGS)
   // define internal variable
   const { mode, editingTask } = props
   const isEditing = mode !== EDITOR_CREATE_MODE
@@ -83,15 +85,14 @@ const EditorDialog = props => {
   // add: set middle priority value as default
   const activeTitle = isEditing ? editingTask.title : ''
   const activeDueDate = isEditing ? new Date(editingTask.dueDate).getTime() : today.setDate(today.getDate() + 1)
-  const activePriority = isEditing
-    ? editingTask.priority
-    : // middle priority value as default
-      PRIORITY_CONFIGS_VALUES[Math.floor(PRIORITY_CONFIGS_VALUES.length / 2)].value
+  const activePriority = isEditing ? editingTask.priority : DEFAULT_PRIORITY
   // handle state
   const [isTitleError, setIsTitleError] = useState(false)
-  const { value: priority, onChangeValue: onChangePriority } = useOnChangeInput(activePriority)
-  const { value: title, onChangeValue: onChangeTitle } = useOnChangeInput(activeTitle)
-  const { value: dueDate, onChangeValue: onChangeDueDate } = useOnChangeInput(dateformat(activeDueDate, 'yyyy-mm-dd'))
+  const { value: priority, setValue: setPriority, onChangeValue: onChangePriority } = useOnChangeInput(activePriority)
+  const { value: title, setValue: setTitle, onChangeValue: onChangeTitle } = useOnChangeInput(activeTitle)
+  const { value: dueDate, setValue: setDueDate, onChangeValue: onChangeDueDate } = useOnChangeInput(
+    dateformat(activeDueDate, 'yyyy-mm-dd')
+  )
   // error handling
   const onClickAddButton = () => {
     // validate title value
@@ -100,6 +101,10 @@ const EditorDialog = props => {
       setIsTitleError(true)
       return false
     }
+    // re-initial default value
+    setTitle('')
+    setPriority(DEFAULT_PRIORITY)
+    setDueDate(dateformat(today.setDate(today.getDate() + 1), 'yyyy-mm-dd'))
     // validate passed
     props.onClickAddButton({ id: editingTask.id, title: cleanTitle, dueDate, priority })
   }

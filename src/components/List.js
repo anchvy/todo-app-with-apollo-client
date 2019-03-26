@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid'
 import { ItemWithApollo } from './Item'
 import EmptyState from './EmptyState'
 import { COLORS } from '../utils/colors'
-import { SPACING } from '../utils/styles'
+import { SPACING, withMobileSize, withDesktopSize } from '../utils/styles'
 import { GET_TODO_LIST_QUERY_NAME, GetTodoListQuery } from '../componentsGraphQL/TodoList'
 import { SIDEBAR_STATE_QUERY_NAME, composedGetSideBarStateQuery } from '../componentsGraphQL/SideBar'
 import { STATUS_CONFIGS } from '../configs/todo'
@@ -48,13 +48,24 @@ const ProgressActive = styled(ProgressBarTemplate)`
   ${props =>
     props.percent &&
     css`
-      &:after {
-        content: ' ';
-        margin: ${SPACING.SM}px;
-      }
-
       width: ${props.percent}%;
     `};
+  // mobile only
+  ${withMobileSize(`
+      font-size: 12px;
+      &:after {
+        content: ' ';
+        margin: ${SPACING.XS}px;
+      }
+    `)}
+    
+  // desktop only
+  ${withDesktopSize(`
+    &:after {
+      content: '${` Done `}';
+      margin: ${SPACING.SM}px;
+    }
+    `)}
 `
 const ProgressBackground = styled(ProgressBarTemplate)`
   width: 100%;
@@ -70,7 +81,7 @@ const ProgressBackground = styled(ProgressBarTemplate)`
 const ProgressBar = ({ percent }) => (
   <ProgressContainer>
     <ProgressBox>
-      <ProgressActive percent={percent}>{percent ? `${percent} % Done` : ''}</ProgressActive>
+      <ProgressActive percent={percent}>{percent ? `${percent} % ` : ''}</ProgressActive>
       <ProgressBackground>{`${percent ? '' : 'STOP WISHING, START DOING!'}`}</ProgressBackground>
     </ProgressBox>
   </ProgressContainer>
