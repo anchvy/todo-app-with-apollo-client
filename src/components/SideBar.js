@@ -27,6 +27,7 @@ import {
 } from '../componentsGraphQL/SideBar'
 import { EDITOR_STATE_MUTATION_NAME, composedSetEditorStateMutation } from '../componentsGraphQL/Editor'
 import { EDITOR_CREATE_MODE } from '../graphql/resolvers/editor'
+import { COLORS } from '../utils/colors'
 
 /*----------------------------------------------------------------------------------
  *  STYLED COMPONENTS
@@ -87,7 +88,7 @@ const MenuItem = styled(({ isSelected, ...restProps }) => <DefaultMenuItem {...r
     css`
       && {
         font-style: italic;
-        background: #eeeeee;
+        background: ${COLORS.MENU_SELECTED};
       }
     `}
 `

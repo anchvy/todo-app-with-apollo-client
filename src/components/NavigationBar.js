@@ -29,7 +29,7 @@ import { MENU_STATUS_CONFIGS, APP_NAME } from '../configs/todo'
 const AppBar = styled(DefaultAppBar)`
   && {
     position: fixed;
-    background: ${COLORS.theme};
+    background: ${COLORS.THEME};
   }
 `
 const Title = styled.div`

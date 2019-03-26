@@ -10,14 +10,19 @@ import { SPACING, withDesktopSize, styleHidden } from '../utils/styles'
 import { SIDEBAR_STATE_QUERY_NAME, composedGetSideBarStateQuery } from '../componentsGraphQL/SideBar'
 import { EDITOR_STATE_MUTATION_NAME, composedSetEditorStateMutation } from '../componentsGraphQL/Editor'
 import { EDITOR_CREATE_MODE } from '../graphql/resolvers/editor'
+import { COLORS } from '../utils/colors'
 
 const AddTaskButton = styled(({ isSideBarOpen, ...restProps }) => <Fab {...restProps} />)`
   && {
     position: fixed;
     bottom: ${SPACING.MD}px;
     right: ${SPACING.MD}px;
-    background: #90a4ae;
+    background: ${COLORS.THEME};
     color: white;
+
+    &:hover {
+      background: ${COLORS.BUTTON_THEME_HOVER};
+    }
   }
 
   ${props => props.isSideBarOpen && styleHidden(true)}

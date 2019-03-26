@@ -39,7 +39,7 @@ const ProgressBarTemplate = styled.div`
   position: absolute;
   border-radius: 30px;
   height: ${PROGRESS_BAR_HEIGHT}px;
-  background-image: linear-gradient(120deg, #b0bec5, ${COLORS.theme});
+  background-image: linear-gradient(120deg, #b0bec5, ${COLORS.THEME});
 `
 const ProgressActive = styled(ProgressBarTemplate)`
   color: white;
@@ -58,7 +58,7 @@ const ProgressActive = styled(ProgressBarTemplate)`
 `
 const ProgressBackground = styled(ProgressBarTemplate)`
   width: 100%;
-  color: ${COLORS.theme};
+  color: ${COLORS.THEME};
   justify-content: center;
   opacity: 0.3;
 `

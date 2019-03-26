@@ -30,6 +30,7 @@ import {
 } from '../componentsGraphQL/TodoList'
 import { composedSetEditorStateMutation, EDITOR_STATE_MUTATION_NAME } from '../componentsGraphQL/Editor'
 import { EDITOR_EDIT_MODE } from '../graphql/resolvers/editor'
+import { COLORS } from '../utils/colors'
 
 const ItemContainer = styled.div`
   position: relative;
@@ -48,7 +49,7 @@ const TitleLabel = styled.div`
   align-items: center;
   word-break: break-word;
   margin-left: ${SPACING.SM}px;
-  color: #424242;
+  color: ${COLORS.THEME};
 `
 const Divider = styled(DefaultDivider)`
   && {
@@ -88,7 +89,7 @@ const StatusLabel = styled.div`
 const DetailBox = styled.div`
   display: flex;
   font-style: italic;
-  color: #bdbdbd;
+  color: ${COLORS.TEXT_SUBTITLE};
   font-size: 12px;
   padding-left: 36px;
   align-items: center;
@@ -97,7 +98,7 @@ const ActionBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #616161;
+  color: ${COLORS.TEXT_TITLE};
 `
 const DetailBoxTitle = styled.span`
   margin-left: ${SPACING.SM}px;
