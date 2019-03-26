@@ -55,7 +55,6 @@ const Divider = styled(DefaultDivider)`
     margin: ${SPACING.SM}px 0;
   }
 `
-
 const ExpansionPanel = styled(({ borderColor, ...restProps }) => <DefaultExpansionPanel {...restProps} />)`
   ${props =>
     props.borderColor &&
@@ -65,7 +64,7 @@ const ExpansionPanel = styled(({ borderColor, ...restProps }) => <DefaultExpansi
 `
 const ExpansionPanelSummary = styled(DefaultExpansionPanelSummary)`
   && {
-    padding: ${SPACING.XS}px ${SPACING.SM}px;
+    padding: ${SPACING.SM}px;
     min-height: 0;
     // overwrite mui child that not exist in jsx
     > div:first-child {
