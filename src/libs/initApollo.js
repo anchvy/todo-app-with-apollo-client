@@ -1,7 +1,6 @@
 import ApolloClient, { InMemoryCache } from 'apollo-boost'
 
 import { resolvers, defaults } from '../graphql/resolvers'
-import typeDefs from '../graphql/typeDefs'
 import { dataIdFromObject } from '../graphql/cache'
 
 // initial apollo cache
@@ -19,7 +18,6 @@ const client = new ApolloClient({
   cache,
   clientState: {
     resolvers,
-    typeDefs,
   },
 })
 

@@ -9,7 +9,6 @@ import DefaultExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetail
 import DefaultExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
-import DefaultCheckbox from '@material-ui/core/Checkbox'
 import DefaultDivider from '@material-ui/core/Divider'
 
 import IconDone from '@material-ui/icons/Done'
@@ -91,7 +90,6 @@ const DetailBox = styled.div`
   font-style: italic;
   color: ${COLORS.TEXT_SUBTITLE};
   font-size: 12px;
-  padding-left: 36px;
   align-items: center;
 `
 const ActionBox = styled.div`
@@ -102,11 +100,6 @@ const ActionBox = styled.div`
 `
 const DetailBoxTitle = styled.span`
   margin-left: ${SPACING.SM}px;
-`
-const Checkbox = styled(DefaultCheckbox)`
-  && {
-    padding: ${SPACING.SM}px;
-  }
 `
 
 /*----------------------------------------------------------------------------------
@@ -131,10 +124,6 @@ const Item = props => {
     event.stopPropagation()
     props.onClickDeleteButton(item)
   }
-  // handle checkbox event
-  const onChangeCheckbox = event => {
-    event.stopPropagation()
-  }
   // new task: created time less than 1 min from now
   const createdAt = new Date(item.createdAt).getTime()
   const isNewTask = new Date() - createdAt < 60 * 1000
@@ -150,7 +139,6 @@ const Item = props => {
           {/* overwrite  mui last child selecting style */}
           <ItemContainer style={{ paddingRight: 0 }}>
             <ContentBox>
-              <Checkbox color="default" onClick={onChangeCheckbox} />
               <TitleLabel>{item.title}</TitleLabel>
             </ContentBox>
           </ItemContainer>

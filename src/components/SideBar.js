@@ -59,7 +59,6 @@ const Paper = styled(({ isOpen, ...restProps }) => <DefaultPaper {...restProps} 
     `)}
   }
 `
-const TitleBox = styled.div``
 const Title = styled.div`
   display: flex;
   justify-content: center;
@@ -108,9 +107,7 @@ const SideBar = props => {
       <CloseButton onClick={props.onClickCloseButton}>
         <IconClose />
       </CloseButton>
-      <TitleBox>
-        <Title>{APP_NAME}</Title>
-      </TitleBox>
+      <Title>{APP_NAME}</Title>
       {/* static menu */}
       <MenuList>
         <Divider disabled />

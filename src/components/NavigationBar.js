@@ -32,15 +32,12 @@ const AppBar = styled(DefaultAppBar)`
     background: ${COLORS.THEME};
   }
 `
-const Title = styled.div`
-  display: flex;
-  align-items: center;
-`
 const Container = styled.div`
   display: flex;
   width: 100%;
   margin: auto;
   font-size: 18px;
+  justify-content: space-between;
 
   ${withDesktopSize(`
   padding-left: ${SIDEBAR_MAX_WIDTH}px;
@@ -48,6 +45,11 @@ const Container = styled.div`
 `
 const MenuButton = styled(IconButton)`
   ${withDesktopSize(styleHidden(false))}
+`
+const Section = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 /*----------------------------------------------------------------------------------
@@ -58,10 +60,12 @@ const NavigationBar = props => (
   <AppBar>
     <Toolbar>
       <Container>
-        <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
-          <MenuIcon />
-        </MenuButton>
-        <Title>{props.title}</Title>
+        <Section>
+          <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
+            <MenuIcon />
+          </MenuButton>
+          {props.title}
+        </Section>
       </Container>
     </Toolbar>
   </AppBar>
@@ -79,8 +83,13 @@ const ComposedNavigationBar = props => {
   const onClickMenuButton = () => {
     props[SIDEBAR_STATE_MUTATION_NAME]({ variables: { isOpen: true } })
   }
-
-  return <NavigationBar title={activeMenu && activeMenu.label} onClickMenuButton={onClickMenuButton} />
+  return (
+    <NavigationBar
+      title={activeMenu && activeMenu.label}
+      activeMeny={activeMenu}
+      onClickMenuButton={onClickMenuButton}
+    />
+  )
 }
 
 export const NavigationBarWithApollo = compose(

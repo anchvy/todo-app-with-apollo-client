@@ -106,6 +106,10 @@ const List = props => (
   </GetTodoListQuery>
 )
 
+/*----------------------------------------------------------------------------------
+ *  COMPONENTS WITH APOLLO
+ *---------------------------------------------------------------------------------*/
+
 const ComposedListStatus = props => {
   // query: sidebar state
   const sideBar = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar`, {})
