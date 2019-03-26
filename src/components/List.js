@@ -49,23 +49,24 @@ const ProgressActive = styled(ProgressBarTemplate)`
     props.percent &&
     css`
       width: ${props.percent}%;
+
+      // mobile only
+      ${withMobileSize(`
+          font-size: 12px;
+          &:after {
+            content: ' ';
+            margin: ${SPACING.XS}px;
+          }
+      `)}
+      
+      // desktop only
+      ${withDesktopSize(`
+        &:after {
+          content: '${` Done `}';
+          margin: ${SPACING.SM}px;
+        }
+      `)}
     `};
-  // mobile only
-  ${withMobileSize(`
-      font-size: 12px;
-      &:after {
-        content: ' ';
-        margin: ${SPACING.XS}px;
-      }
-    `)}
-    
-  // desktop only
-  ${withDesktopSize(`
-    &:after {
-      content: '${` Done `}';
-      margin: ${SPACING.SM}px;
-    }
-    `)}
 `
 const ProgressBackground = styled(ProgressBarTemplate)`
   width: 100%;
