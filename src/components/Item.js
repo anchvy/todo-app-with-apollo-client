@@ -10,6 +10,7 @@ import DefaultExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummar
 import Grid from '@material-ui/core/Grid'
 import IconButton from '@material-ui/core/IconButton'
 import DefaultDivider from '@material-ui/core/Divider'
+import DefaultCheckbox from '@material-ui/core/Checkbox'
 
 import IconDone from '@material-ui/icons/Done'
 import IconDoneOutline from '@material-ui/icons/DoneOutline'
@@ -18,7 +19,7 @@ import IconDeleteOutline from '@material-ui/icons/DeleteOutline'
 import IconDateRange from '@material-ui/icons/DateRange'
 
 import { PRIORITY_CONFIGS, STATUS_CONFIGS } from '../configs/todo'
-import { SPACING } from '../utils/styles'
+import { SPACING, withDesktopSize, withMobileSize } from '../utils/styles'
 import { EMPTY_FUNCTION } from '../utils/constant'
 
 import {
@@ -49,6 +50,14 @@ const TitleLabel = styled.div`
   word-break: break-word;
   margin-left: ${SPACING.SM}px;
   color: ${COLORS.THEME};
+
+  ${withDesktopSize(`
+  font-size: 16px;
+  `)}
+
+  ${withMobileSize(`
+  font-size: 14px;
+  `)}
 `
 const Divider = styled(DefaultDivider)`
   && {
@@ -64,7 +73,7 @@ const ExpansionPanel = styled(({ borderColor, ...restProps }) => <DefaultExpansi
 `
 const ExpansionPanelSummary = styled(DefaultExpansionPanelSummary)`
   && {
-    padding: ${SPACING.SM}px;
+    padding: ${SPACING.XS}px ${SPACING.SM}px;
     min-height: 0;
     // overwrite mui child that not exist in jsx
     > div:first-child {
@@ -90,6 +99,7 @@ const DetailBox = styled.div`
   color: ${COLORS.TEXT_SUBTITLE};
   font-size: 12px;
   align-items: center;
+  padding-left: ${SPACING.XL}px;
 `
 const ActionBox = styled.div`
   display: flex;
@@ -99,6 +109,11 @@ const ActionBox = styled.div`
 `
 const DetailBoxTitle = styled.span`
   margin-left: ${SPACING.SM}px;
+`
+const Checkbox = styled(DefaultCheckbox)`
+  && {
+    padding: ${SPACING.SM}px;
+  }
 `
 
 /*----------------------------------------------------------------------------------
@@ -123,6 +138,10 @@ const Item = props => {
     event.stopPropagation()
     props.onClickDeleteButton(item)
   }
+  // handle checkbox event
+  const onChangeCheckbox = event => {
+    event.stopPropagation()
+  }
   // new task: created time less than 1 min from now
   const createdAt = new Date(item.createdAt).getTime()
   const isNewTask = new Date() - createdAt < 60 * 1000
@@ -138,6 +157,7 @@ const Item = props => {
           {/* overwrite  mui last child selecting style */}
           <ItemContainer style={{ paddingRight: 0 }}>
             <ContentBox>
+              <Checkbox color="default" onClick={onChangeCheckbox} />
               <TitleLabel>{item.title}</TitleLabel>
             </ContentBox>
           </ItemContainer>

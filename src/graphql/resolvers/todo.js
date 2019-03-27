@@ -4,13 +4,21 @@ import { getTodoList, upsertNewTodoItem, deleteTodoItem, updateTodoItemStatus } 
 import { STATUS_CONFIGS } from '../../configs/todo'
 import { composeTypenameFactory } from '../../utils/graphql'
 import { getSideBarCache, setSideBarCache } from './sideBar'
+import { GET_SELECTED_TODO_ITEMS } from '../../componentsGraphQL/TodoList'
 
 // Define typename
 export const TODO_LIST_TYPE_NAME = 'TodoList'
 export const TODO_ITEM_TYPE_NAME = 'TodoItem'
+export const TODO_SELECTED_ITEM_TYPE_NAME = 'TodoSelectedItem'
 
 export const composeTodoListTypename = composeTypenameFactory(TODO_LIST_TYPE_NAME)
 export const composeTodoItemTypename = composeTypenameFactory(TODO_ITEM_TYPE_NAME)
+export const composeTodoSelectedItemTypename = composeTypenameFactory(TODO_SELECTED_ITEM_TYPE_NAME)
+
+// Define initial state
+export const defaults = {
+  selectedItems: [],
+}
 
 /**
  * sort and filter list with given options
@@ -36,6 +44,11 @@ export const resolvers = {
     },
   },
   Mutation: {
+    toggleSelectedItems: (_src, { id }, { cache }) => {
+      const { selectedItems } = cache.readQuery({ query: GET_SELECTED_TODO_ITEMS })
+      console.log('>>> [todo.js] id : ', id)
+      console.log('>>> [todo.js] selectedItems : ', selectedItems)
+    },
     doneTodo: (_src, { id }, { cache }) => {
       const sideBar = getSideBarCache(cache)
       // change task status to 'done'
