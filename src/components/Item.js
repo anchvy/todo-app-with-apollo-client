@@ -27,6 +27,8 @@ import {
   DELETE_TODO_ITEM_MUTATION_NAME,
   composedDoneTodoItemMutation,
   DONE_TODO_ITEM_MUTATION_NAME,
+  composedSetSelectedTodoItemsMutation,
+  SET_SELECTED_TODO_ITEMS_MUTATION_NAME,
 } from '../componentsGraphQL/TodoList'
 import { composedSetEditorStateMutation, EDITOR_STATE_MUTATION_NAME } from '../componentsGraphQL/Editor'
 import { EDITOR_EDIT_MODE } from '../graphql/resolvers/editor'
@@ -141,6 +143,7 @@ const Item = props => {
   // handle checkbox event
   const onChangeCheckbox = event => {
     event.stopPropagation()
+    props.onChangeCheckbox(item)
   }
   // new task: created time less than 1 min from now
   const createdAt = new Date(item.createdAt).getTime()
@@ -157,7 +160,7 @@ const Item = props => {
           {/* overwrite  mui last child selecting style */}
           <ItemContainer style={{ paddingRight: 0 }}>
             <ContentBox>
-              <Checkbox color="default" onClick={onChangeCheckbox} />
+              <Checkbox color="default" onClick={onChangeCheckbox} checked={props.isSelectedCheckbox} />
               <TitleLabel>{item.title}</TitleLabel>
             </ContentBox>
           </ItemContainer>
@@ -203,6 +206,10 @@ const composedItem = props => {
   const onClickDeleteButton = item => {
     props[DELETE_TODO_ITEM_MUTATION_NAME]({ variables: { id: item.id } })
   }
+  // handle on change checkbox state
+  const onChangeCheckbox = item => {
+    props[SET_SELECTED_TODO_ITEMS_MUTATION_NAME]({ variables: { id: item.id } })
+  }
 
   return (
     <Item
@@ -210,6 +217,7 @@ const composedItem = props => {
       onClickEditButton={onClickEditButton}
       onClickDeleteButton={onClickDeleteButton}
       onClickDoneButton={onClickDoneButton}
+      onChangeCheckbox={onChangeCheckbox}
     />
   )
 }
@@ -217,13 +225,16 @@ const composedItem = props => {
 export const ItemWithApollo = compose(
   composedSetEditorStateMutation,
   composedDeleteTodoItemMutation,
-  composedDoneTodoItemMutation
+  composedDoneTodoItemMutation,
+  composedSetSelectedTodoItemsMutation
 )(composedItem)
 
 Item.propTypes = {
   onClickDeleteButton: PropTypes.func,
   onClickDoneButton: PropTypes.func,
   onClickEditButton: PropTypes.func,
+  onChangeCheckbox: PropTypes.func,
+  isSelectedCheckbox: PropTypes.bool,
   item: PropTypes.shape({
     title: PropTypes.string,
     priority: PropTypes.string,
@@ -237,6 +248,8 @@ Item.defaultProps = {
   onClickDeleteButton: EMPTY_FUNCTION,
   onClickDoneButton: EMPTY_FUNCTION,
   onClickEditButton: EMPTY_FUNCTION,
+  onChangeCheckbox: EMPTY_FUNCTION,
+  isSelectedCheckbox: false,
   item: {},
 }
 

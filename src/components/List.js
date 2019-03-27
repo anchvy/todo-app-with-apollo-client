@@ -10,7 +10,12 @@ import { ItemWithApollo } from './Item'
 import EmptyState from './EmptyState'
 import { COLORS } from '../utils/colors'
 import { SPACING, withMobileSize, withDesktopSize } from '../utils/styles'
-import { GET_TODO_LIST_QUERY_NAME, GetTodoListQuery } from '../componentsGraphQL/TodoList'
+import {
+  GET_TODO_LIST_QUERY_NAME,
+  GetTodoListQuery,
+  composedGetSelectedTodoItemsQuery,
+  GET_SELECTED_TODO_ITEMS_QUERY_NAME,
+} from '../componentsGraphQL/TodoList'
 import { SIDEBAR_STATE_QUERY_NAME, composedGetSideBarStateQuery } from '../componentsGraphQL/SideBar'
 import { STATUS_CONFIGS } from '../configs/todo'
 
@@ -107,7 +112,11 @@ const List = props => (
           {isShowProgressBar && <ProgressBar percent={progressPercent} />}
           <Grid container spacing={SPACING.SM}>
             {todoItems.map(item => (
-              <ItemWithApollo key={item.id} item={item} />
+              <ItemWithApollo
+                key={item.id}
+                item={item}
+                isSelectedCheckbox={!!_.find(props.selectedItems, { id: item.id })}
+              />
             ))}
           </Grid>
         </ItemList>
@@ -123,18 +132,25 @@ const List = props => (
  *---------------------------------------------------------------------------------*/
 
 const ComposedListStatus = props => {
+  // query: selected items
+  const selectedItems = _.get(props, `${GET_SELECTED_TODO_ITEMS_QUERY_NAME}.selectedItems`, [])
   // query: sidebar state
   const sideBar = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar`, {})
-  return <List filter={sideBar.selected} />
+  return <List selectedItems={selectedItems} filter={sideBar.selected} />
 }
 
-export const ListWithApollo = compose(composedGetSideBarStateQuery)(ComposedListStatus)
+export const ListWithApollo = compose(
+  composedGetSideBarStateQuery,
+  composedGetSelectedTodoItemsQuery
+)(ComposedListStatus)
 
 List.propTypes = {
+  selectedItems: PropTypes.array,
   filter: PropTypes.string,
 }
 
 List.defaultProps = {
+  selectedItems: [],
   filter: STATUS_CONFIGS.ALL.query,
 }
 

@@ -1,21 +1,27 @@
+import _ from 'lodash'
 import { LOCALSTORAGE_KEY } from '../../configs/todo'
 import { getItem, setItem } from '../../libs/localStorage'
 
 /**
  * update todo item status with given options
- * @param {string} id
+ * @param {string|Array<string>} id
  * @param {string} status
  * @returns {Object}
  */
 export function updateTodoItemStatus(id, status) {
   const items = getTodoList()
-  const newItems = {
-    ...items,
-    [id]: {
-      ...items[id],
-      status,
-    },
-  }
+  const updateIds = _.isArray(id) ? id : [id]
+  // update with existing items
+  const newItems = updateIds.reduce(
+    (result, updateId) => ({
+      ...result,
+      [updateId]: {
+        ...items[updateId],
+        status,
+      },
+    }),
+    items
+  )
   // set new data to store
   const response = setItem(LOCALSTORAGE_KEY, newItems)
   return response ? newItems : null
@@ -23,19 +29,17 @@ export function updateTodoItemStatus(id, status) {
 
 /**
  * delete todo item from store with given id
- * @param {string} id
+ * @param {string|Array<string>} id
  * @returns {Object}
  */
 export function deleteTodoItem(id) {
   const items = getTodoList()
-  const acknowledge = delete items[id]
-
-  if (acknowledge) {
-    const response = setItem(LOCALSTORAGE_KEY, items)
-    return response ? items : null
-  }
-
-  return null
+  const deleteIds = _.isArray(id) ? id : [id]
+  // delete from existing items
+  const newItems = _.omit(items, deleteIds)
+  // set new items to storage
+  const response = setItem(LOCALSTORAGE_KEY, newItems)
+  return response ? newItems : null
 }
 
 /**
