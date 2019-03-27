@@ -12,7 +12,7 @@ $ yarn start
 # Overview
 > TODO-App with local state management.
 
-**Built with:**
+**Built-in:**
 - React.js
 - Styled-components
 - Material-UI
