@@ -23,7 +23,7 @@ import {
   composedGetSideBarStateQuery,
 } from '../componentsGraphQL/SideBar'
 import { MAX_WIDTH as SIDEBAR_MAX_WIDTH } from './SideBar'
-import { withDesktopSize, styleHidden } from '../utils/styles'
+import { withDesktopSize, styleHidden, SPACING } from '../utils/styles'
 import { MENU_STATUS_CONFIGS, APP_NAME, STATUS_CONFIGS } from '../configs/todo'
 
 import {
@@ -66,6 +66,11 @@ const Section = styled.div`
   justify-content: center;
   align-items: center;
 `
+const ActionBarButton = styled(IconButton)`
+  && {
+    padding: ${SPACING.SM}px;
+  }
+`
 
 /*----------------------------------------------------------------------------------
  *  MAIN COMPOENTNS
@@ -81,16 +86,16 @@ const ActionBar = props => {
   return (
     <Section>
       {isShowDoneButton && (
-        <IconButton color="inherit" aria-label="Done Selected Items" onClick={props.onClickDoneButton}>
+        <ActionBarButton color="inherit" aria-label="Done Selected Items" onClick={props.onClickDoneButton}>
           <IconDoneOutline />
-        </IconButton>
+        </ActionBarButton>
       )}
-      <IconButton color="inherit" aria-label="Delete Selected Items" onClick={props.onClickDeleteButton}>
+      <ActionBarButton color="inherit" aria-label="Delete Selected Items" onClick={props.onClickDeleteButton}>
         <IconDeleteOutline />
-      </IconButton>
-      <IconButton color="inherit" aria-label="Clear Selected Items" onClick={props.onClickClearButton}>
+      </ActionBarButton>
+      <ActionBarButton color="inherit" aria-label="Clear Selected Items" onClick={props.onClickClearButton}>
         <IconClear />
-      </IconButton>
+      </ActionBarButton>
     </Section>
   )
 }
@@ -111,28 +116,37 @@ ActionBar.defaultProps = {
 
 /*---------------------------------------------------------------------------------*/
 
-const NavigationBar = props => (
-  <AppBar>
-    <Toolbar>
-      <Container>
-        <Section>
-          <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
-            <IconMenu />
-          </MenuButton>
-          {props.title}
-        </Section>
-        <ActionBarWithApollo />
-      </Container>
-    </Toolbar>
-  </AppBar>
-)
+const NavigationBar = props => {
+  const { selectedItems } = props
+  // find selected items length to define title component
+  const itemsLength = selectedItems.length
+  const titleComponent = itemsLength > 0 ? `${props.selectedItems.length} SELECTED` : props.title
+
+  return (
+    <AppBar>
+      <Toolbar>
+        <Container>
+          <Section>
+            <MenuButton color="inherit" aria-label="Menu" onClick={props.onClickMenuButton}>
+              <IconMenu />
+            </MenuButton>
+            {titleComponent}
+          </Section>
+          <ActionBarWithApollo selectedItems={props.selectedItems} />
+        </Container>
+      </Toolbar>
+    </AppBar>
+  )
+}
 
 NavigationBar.propTypes = {
+  selectedItems: PropTypes.array,
   title: PropTypes.string,
   onClickMenuButton: PropTypes.func,
 }
 
 NavigationBar.defaultProps = {
+  selectedItems: EMPTY_ARRAY,
   title: APP_NAME,
   onClickMenuButton: EMPTY_FUNCTION,
 }
@@ -142,8 +156,7 @@ NavigationBar.defaultProps = {
  *---------------------------------------------------------------------------------*/
 
 const ComposedActionBar = props => {
-  // query: current selected items
-  const selectedItems = _.get(props, `${GET_SELECTED_TODO_ITEMS_QUERY_NAME}.selectedItems`, [])
+  const { selectedItems } = props
   // handle on click done button on navbar event
   const onClickDoneButton = () => {
     props[DONE_TODO_ITEMS_MUTATION_NAME]({ variables: { ids: selectedItems.map(({ id }) => id) } })
@@ -158,7 +171,7 @@ const ComposedActionBar = props => {
   }
   return (
     <ActionBar
-      selectedItems={selectedItems}
+      selectedItems={props.selectedItems}
       onClickDoneButton={onClickDoneButton}
       onClickDeleteButton={onClickDeleteButton}
       onClickClearButton={onClickClearButton}
@@ -169,13 +182,22 @@ const ComposedActionBar = props => {
 export const ActionBarWithApollo = compose(
   composedDeleteTodoItemsMutation,
   composedDoneTodoItemsMutation,
-  composedGetSelectedTodoItemsQuery,
   composedResetSelectedTodoItemsMutation
 )(ComposedActionBar)
+
+ComposedActionBar.propTypes = {
+  selectedItems: PropTypes.array,
+}
+
+ComposedActionBar.defaultProps = {
+  selectedItems: EMPTY_ARRAY,
+}
 
 /*---------------------------------------------------------------------------------*/
 
 const ComposedNavigationBar = props => {
+  // query: current selected items
+  const selectedItems = _.get(props, `${GET_SELECTED_TODO_ITEMS_QUERY_NAME}.selectedItems`, [])
   // query: sidebar state
   const sideBar = _.get(props, `${SIDEBAR_STATE_QUERY_NAME}.sideBar`, {})
   const activeMenu = _.find(MENU_STATUS_CONFIGS, status => status.query === sideBar.selected)
@@ -188,13 +210,15 @@ const ComposedNavigationBar = props => {
       title={activeMenu && activeMenu.label}
       activeMeny={activeMenu}
       onClickMenuButton={onClickMenuButton}
+      selectedItems={selectedItems}
     />
   )
 }
 
 export const NavigationBarWithApollo = compose(
   composedSetSideBarStateMutation,
-  composedGetSideBarStateQuery
+  composedGetSideBarStateQuery,
+  composedGetSelectedTodoItemsQuery
 )(ComposedNavigationBar)
 
 export default NavigationBar
