@@ -28,15 +28,12 @@ $ yarn start
 Responsive design; support on mobile/desktop (**on RESIZE**)
 
 ### # Mobile
-![Mobile1](https://user-images.githubusercontent.com/29141862/55087769-2fb69480-50dd-11e9-9d25-57b507129699.png)
-![Mobile2](https://user-images.githubusercontent.com/29141862/55087772-30e7c180-50dd-11e9-8e5d-298a9c982c3e.png)
-![Mobile3](https://user-images.githubusercontent.com/29141862/55087778-334a1b80-50dd-11e9-8ddc-0038a918fe59.png)
-![Mobile4](https://user-images.githubusercontent.com/29141862/55087784-37763900-50dd-11e9-8d2e-1dc37dec92ba.png)
-![Mobile5](https://user-images.githubusercontent.com/29141862/55087791-39d89300-50dd-11e9-8e62-819170838d2f.png)
+![Mobile1](https://user-images.githubusercontent.com/29141862/55088675-b5870f80-50de-11e9-86d3-f98a47170eb2.png)
+![Mobile2](https://user-images.githubusercontent.com/29141862/55088676-b61fa600-50de-11e9-810a-cadd6b6c4c14.png)
+![Mobile3](https://user-images.githubusercontent.com/29141862/55088678-b61fa600-50de-11e9-9e95-030f72d3e2ae.png)
 
 ### # Desktop
-![Desktop1](https://user-images.githubusercontent.com/29141862/55087764-2d543a80-50dd-11e9-94f6-2dc42190ee76.png)
-![Desktop2](https://user-images.githubusercontent.com/29141862/55087799-3c3aed00-50dd-11e9-9c4c-2b9e5abd2369.png)
+![Desktop1](https://user-images.githubusercontent.com/29141862/55088679-b61fa600-50de-11e9-8073-ba358530dade.png)
 
 
 
