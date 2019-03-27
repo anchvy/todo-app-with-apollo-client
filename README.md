@@ -26,3 +26,16 @@ $ yarn start
 
 # Look and Feel
 Responsive design; support on mobile/desktop (**on RESIZE**)
+
+### # Mobile
+https://user-images.githubusercontent.com/29141862/55087769-2fb69480-50dd-11e9-9d25-57b507129699.png
+https://user-images.githubusercontent.com/29141862/55087772-30e7c180-50dd-11e9-8e5d-298a9c982c3e.png
+https://user-images.githubusercontent.com/29141862/55087778-334a1b80-50dd-11e9-8ddc-0038a918fe59.png
+https://user-images.githubusercontent.com/29141862/55087784-37763900-50dd-11e9-8d2e-1dc37dec92ba.png
+https://user-images.githubusercontent.com/29141862/55087791-39d89300-50dd-11e9-8e62-819170838d2f.png
+### # Desktop
+https://user-images.githubusercontent.com/29141862/55087764-2d543a80-50dd-11e9-94f6-2dc42190ee76.png
+https://user-images.githubusercontent.com/29141862/55087799-3c3aed00-50dd-11e9-9c4c-2b9e5abd2369.png
+
+
+
